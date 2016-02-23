@@ -90,7 +90,7 @@ void* Server::createThread(void* arg){
 }
 void * Server::handleRequest(int arg){
     int fd = arg;
-    return NULL:
+    return NULL;
 }
 }
 
