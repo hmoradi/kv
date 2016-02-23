@@ -95,7 +95,7 @@ void* Server::createThread(void* arg){
     return NULL;
 }
 void * Server::handleRequest(int arg){
-    int fd = arg;
+    //int fd = arg;
     std::cout <<"handle request, fd is "<< arg << std::endl;
     //server_send(fd,"foo==bar\n");
     return NULL;
