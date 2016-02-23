@@ -163,9 +163,7 @@ void * Server::handleRequest(int arg){
                 server_send(rfd,response);
             }   
         }
-
-        //do_command (buf,rfd) ;  
-
+        s.clear();
     }
     return NULL;
 }
