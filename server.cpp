@@ -94,8 +94,8 @@ void Server::throw_error(const char* msg_, int errno_) {
     throw std::runtime_error(msg);
 }
 void* Server::createThread(void* arg){
-    struct readThreadParams *readParams = arg;
-    ((readParams->server_) -> handleRequest(readParams -> client_fd);
+    struct readThreadParams *readParams = (readThreadParams *)arg;
+    (readParams->server_) -> handleRequest(readParams -> client_fd);
     std::cout << "created thread, client_fd="<< std::endl;
     return NULL;
 }
