@@ -136,10 +136,10 @@ void * Server::handleRequest(int arg){
                 i++;
             }
             std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
-            if (message[0].compare("quit")){
+            if (message[0].compare("quit") == 0){
                 std::cout<<"inside quit"<<message[0]<<std::endl;
                 quit(rfd);
-            }else if(message[0].compare("set")){
+            }else if(message[0].compare("set") == 0){
                 std::cout<<"inside set" << std::endl;
                 std::string response = do_command(message[1],message[2]);
                 std::cout<< "response is " << response << std::endl;
