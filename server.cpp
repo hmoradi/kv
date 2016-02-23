@@ -76,7 +76,7 @@ void Server::run() {
     //throw_error("Server::run() is not not implemented", 0);
     while(1){
         client_fd = accept_new_connection();
-        pthread_create(&threads[rfd], NULL, Server::createThread, this);
+        pthread_create(&threads[client_fd], NULL, Server::createThread, this);
     }
 }
 
@@ -87,8 +87,8 @@ void Server::throw_error(const char* msg_, int errno_) {
 void* Server::createThread(void* arg){
     ((Server*)arg) -> handleRequest(((Server*)arg) -> client_fd);
 }
-void * Server::handleRequest(void * arg){
-    int fd = (int) arg;
+void * Server::handleRequest(int arg){
+    int fd = arg;
 }
 }
 

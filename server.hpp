@@ -19,7 +19,7 @@ private:
     void throw_error(const char* msg_, int errno_);
     //add your methods here
     static void* createThread(void* arg);
-    void * handleRequest(void * arg);
+    void * handleRequest(int arg);
 };
 
 }
