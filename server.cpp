@@ -119,7 +119,6 @@ void * Server::handleRequest(int arg){
     for(;;)
     {
         //read incomming message.
-        while()
         buflen = read(rfd, buf, sizeof(buf));
         if (buflen <= 0)
         {   
