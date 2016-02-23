@@ -14,6 +14,7 @@
 
 //added my header files
 #include <pthread.h>
+pthread_mutex_t mutex_state = PTHREAD_MUTEX_INITIALIZER;
 namespace EpochLabsTest {
 
 Server::Server(const std::string& listen_address, int listen_port)
@@ -75,7 +76,9 @@ void Server::run() {
     //run() should loop forever servicing requests/connections
     //throw_error("Server::run() is not not implemented", 0);
     while(1){
+        pthread_mutex_lock(&mutex_state);
         client_fd = accept_new_connection();
+        pthread_mutex_unlock(&mutex_state);
         pthread_create(&threads[client_fd], NULL, Server::createThread, this);
     }
 }
@@ -85,7 +88,9 @@ void Server::throw_error(const char* msg_, int errno_) {
     throw std::runtime_error(msg);
 }
 void* Server::createThread(void* arg){
+    pthread_mutex_lock(&mutex_state);
     ((Server*)arg) -> handleRequest(((Server*)arg) -> client_fd);
+    pthread_mutex_unlock(&mutex_state);
     return NULL;
 }
 void * Server::handleRequest(int arg){
