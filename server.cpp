@@ -128,17 +128,24 @@ void * Server::handleRequest(int arg){
             std::cout<<"reques is "<<s <<std::endl;
             s.erase(s.size()-1);
             std::string delimiter = " ";
-
+            
             size_t pos = 0;
-            std::string token;
-            int i = 0;
-            while ((pos = s.find(delimiter)) != std::string::npos) {
-                token = s.substr(0, pos);
-                message[i] = token;
-                s.erase(0, pos + delimiter.length());
-                i++;
+            if((pos = s.find(delimiter)) != std::string::npos)){
+                std::string token;
+            
+                int i = 0;
+                while ((pos = s.find(delimiter)) != std::string::npos) {
+                    token = s.substr(0, pos);
+                    message[i] = token;
+                    s.erase(0, pos + delimiter.length());
+                    i++;
+                }
+                message[2] = s;
+            }else{
+                message[0] =  s;
             }
-            message[2] = s;
+
+            
            
             //std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
             if (message[0].compare("quit") == 0){
