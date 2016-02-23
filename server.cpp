@@ -127,7 +127,7 @@ void * Server::handleRequest(int arg){
             std::string s = std::string(buf);
             std::cout<<"request is "<<s <<std::endl;
             s.erase(s.size()-1);
-            std::cout<< "after erase is "<< s << std::endl;
+            //std::cout<< "after erase is "<< s << std::endl;
             std::string delimiter = " ";
             
             size_t pos = 0;
@@ -141,7 +141,7 @@ void * Server::handleRequest(int arg){
                     s.erase(0, pos + delimiter.length());
                     i++;
                 }
-                message[2] = s;
+                message[i] = s;
             }else{
                 message[0] =  s;
             }
@@ -154,12 +154,14 @@ void * Server::handleRequest(int arg){
                 quit(rfd);
             }else if(message[0].compare("set") == 0){
                 std::cout<<"inside set" << std::endl;
-                std::string response = do_command(message[1],message[2]);
+                std::string response = set(message[1],message[2]);
                 std::cout<< "response is " << response << std::endl;
                 server_send(rfd,response);
-            }else{
-                std::cout<<"command not match "<<message[0] << " " <<message[0].size()<<std::endl;
-            }
+            }else if(message[0].compare("get") == 0){
+                std::string response = get(message[1]);
+                std::cout<< "response is " << response << std::endl;
+                server_send(rfd,response);
+            }   
         }
 
         //do_command (buf,rfd) ;  
@@ -167,9 +169,17 @@ void * Server::handleRequest(int arg){
     }
     return NULL;
 }
-std::string Server::do_command(std::string key, std::string val){
+std::string Server::set(std::string key, std::string val){
     std::cout << "command called with "<< key << "=" << val << std::endl;
     Server::map_[key]=val;
+    return key + "=" + val + "\n";
+}
+std::string Server::get(std::string key){
+    std::cout << "get called with "<< key <<std::endl;
+    std::string val = "NULL"
+    if ( map_.find(key) != map_.end() ) {
+        val = map_[key];
+    }
     return key + "=" + val + "\n";
 }
 int Server::quit(int client_fd){
