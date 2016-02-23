@@ -164,7 +164,7 @@ void * Server::handleRequest(int arg){
             } 
 
         }
-        char *begin = &buf;
+        char *begin = &buf[0];
         char *end = begin + sizeof(buf);
         std::fill(begin, end, 0);
     }
