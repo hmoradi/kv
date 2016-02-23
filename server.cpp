@@ -12,7 +12,6 @@
 #include <sys/socket.h>
 
 
-#include <map>
 #include <stdint.h>
 #include <netdb.h>
 #include <pthread.h>

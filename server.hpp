@@ -2,7 +2,7 @@
 #define EPOCHLABS_TEST_SERVER_HPP
 
 #include <string>
-
+#include <map>
 namespace EpochLabsTest {
 
 class Server {
