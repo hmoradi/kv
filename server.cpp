@@ -13,7 +13,7 @@
 
 
 
-
+#include <stdint.h>
 #include <netdb.h>
 #include <pthread.h>
 #include <vector>
@@ -89,7 +89,7 @@ void Server::run() {
             throw_error("error accepting connection", errno);
         }
         arg = (intptr_t *) clientFD;
-        pthread_create(&threads[clientFD], NULL, tcp_server_read, arg);
+        pthread_create(&threads[clientFD], NULL, Server::tcp_server_read, arg);
 
     }
     //throw_error("Server::run() is not not implemented", 0);
