@@ -79,7 +79,7 @@ void Server::run() {
         pthread_mutex_lock(&mutex_state);
         client_fd = accept_new_connection();
         pthread_create(&threads[client_fd], NULL, Server::createThread, this);
-        pthread_mutex_unlock(&mutex_state);
+        //pthread_mutex_unlock(&mutex_state);
     }
 }
 

@@ -13,7 +13,7 @@ logger = logging.getLogger()
 
 PROG_PATH = './server'
 LIST_ADDR = '127.0.0.1'
-LIST_PORT = '2020'
+LIST_PORT = '2022'
 
 class EpochAPI(object):
     def __init__(self, addr, port):
@@ -131,230 +131,230 @@ class TestServer(unittest.TestCase):
         self.api1.assert_quit()
         self.api0.assert_quit()
 
-    def test_empty_disconnect(self):
-        self.assert_disconnect(self.api1)
-        self.assert_disconnect(self.api0)
+    # def test_empty_disconnect(self):
+    #     self.assert_disconnect(self.api1)
+    #     self.assert_disconnect(self.api0)
 
-    def test_disconnect_after_set(self):
-        self.api0.assert_set('a'*100, 'b'*100)
-        self.assert_disconnect(self.api0)
+    # def test_disconnect_after_set(self):
+    #     self.api0.assert_set('a'*100, 'b'*100)
+    #     self.assert_disconnect(self.api0)
 
-    def test_disconnect_after_get(self):
-        self.api0.assert_set('a'*500, 'b'*500)
-        self.api0.assert_get('a'*500, 'b'*500)
-        self.assert_disconnect(self.api0)
+    # def test_disconnect_after_get(self):
+    #     self.api0.assert_set('a'*500, 'b'*500)
+    #     self.api0.assert_get('a'*500, 'b'*500)
+    #     self.assert_disconnect(self.api0)
 
-    def test_example_session(self):
-        self.api0.assert_set('foo', 'bar')
-        self.api0.assert_get('foo', 'bar')
-        self.api0.assert_get('bar', 'null')
-        self.api0.assert_set('1a2b3c', 'foo')
-        self.api0.assert_set('10', 'ten')
-        self.api0.assert_get('foo', 'bar')
-        self.api0.assert_set('foo', 'baz')
-        self.api0.assert_get('ten', 'null')
-        self.api0.assert_get('foo', 'baz')
-        self.api0.assert_get('qux', 'null')
-        self.api0.assert_quit()
+    # def test_example_session(self):
+    #     self.api0.assert_set('foo', 'bar')
+    #     self.api0.assert_get('foo', 'bar')
+    #     self.api0.assert_get('bar', 'null')
+    #     self.api0.assert_set('1a2b3c', 'foo')
+    #     self.api0.assert_set('10', 'ten')
+    #     self.api0.assert_get('foo', 'bar')
+    #     self.api0.assert_set('foo', 'baz')
+    #     self.api0.assert_get('ten', 'null')
+    #     self.api0.assert_get('foo', 'baz')
+    #     self.api0.assert_get('qux', 'null')
+    #     self.api0.assert_quit()
 
-    def test_pipeline(self):
-        reqs = [
-            ('get', 'k0'),
-            ('set', 'k1', 'v1'),
-            ('get', 'k1'),
-            ('set', 'k0', 'v0'),
-            ('set', 'k1', 'val1'),
-            ('get', 'k0'),
-            ('get', 'k1')
-        ]
-        rsps = [
-            ('k0', 'null'),
-            ('k1', 'v1'),
-            ('k1', 'v1'),
-            ('k0', 'v0'),
-            ('k1', 'val1'),
-            ('k0', 'v0'),
-            ('k1', 'val1')
-        ]
-        msgs = map(lambda t: ' '.join(t), reqs)
-        self.api0._send('\n'.join(msgs) + '\n')
-        self.api0.assert_multi_response(rsps)
-        self.api0.assert_set('k2', 'v2')
-        self.api0.assert_set('k2', 'val2')
-        self.api0.assert_get('k2', 'val2')
+    # def test_pipeline(self):
+    #     reqs = [
+    #         ('get', 'k0'),
+    #         ('set', 'k1', 'v1'),
+    #         ('get', 'k1'),
+    #         ('set', 'k0', 'v0'),
+    #         ('set', 'k1', 'val1'),
+    #         ('get', 'k0'),
+    #         ('get', 'k1')
+    #     ]
+    #     rsps = [
+    #         ('k0', 'null'),
+    #         ('k1', 'v1'),
+    #         ('k1', 'v1'),
+    #         ('k0', 'v0'),
+    #         ('k1', 'val1'),
+    #         ('k0', 'v0'),
+    #         ('k1', 'val1')
+    #     ]
+    #     msgs = map(lambda t: ' '.join(t), reqs)
+    #     self.api0._send('\n'.join(msgs) + '\n')
+    #     self.api0.assert_multi_response(rsps)
+    #     self.api0.assert_set('k2', 'v2')
+    #     self.api0.assert_set('k2', 'val2')
+    #     self.api0.assert_get('k2', 'val2')
 
-    def test_threaded_pipeline(self):
-        v = lambda i: ('val%s' % i)*(i%100+1)
+    # def test_threaded_pipeline(self):
+    #     v = lambda i: ('val%s' % i)*(i%100+1)
 
-        def write_target(api, count):
-            reqs = '\n'.join(['set k %s' % v(i) for i in range(1, count)])
-            api._send(reqs)
-            api._send('\nset k pipeline\n')
+    #     def write_target(api, count):
+    #         reqs = '\n'.join(['set k %s' % v(i) for i in range(1, count)])
+    #         api._send(reqs)
+    #         api._send('\nset k pipeline\n')
 
-        def read_target(api, count):
-            for i in range(1, count):
-                api.assert_recv_msg('k', v(i))
-            api.assert_recv_msg('k', 'pipeline')
+    #     def read_target(api, count):
+    #         for i in range(1, count):
+    #             api.assert_recv_msg('k', v(i))
+    #         api.assert_recv_msg('k', 'pipeline')
 
-        apis = []
-        threads = []
-        thread_pairs=2
-        request_count = 5*1000
-        for i in range(thread_pairs):
-            api = EpochAPI(LIST_ADDR, LIST_PORT)
-            threads.append(threading.Thread(target=read_target, args=(api, request_count)))
-            threads.append(threading.Thread(target=write_target, args=(api, request_count)))
-            apis.append(api)
-        map(lambda t: t.start(), threads)
-        map(lambda t: t.join(), threads)
-        self.api0.assert_get('k', 'pipeline')
-        self.api1.assert_get('k', 'pipeline')
+    #     apis = []
+    #     threads = []
+    #     thread_pairs=2
+    #     request_count = 5*1000
+    #     for i in range(thread_pairs):
+    #         api = EpochAPI(LIST_ADDR, LIST_PORT)
+    #         threads.append(threading.Thread(target=read_target, args=(api, request_count)))
+    #         threads.append(threading.Thread(target=write_target, args=(api, request_count)))
+    #         apis.append(api)
+    #     map(lambda t: t.start(), threads)
+    #     map(lambda t: t.join(), threads)
+    #     self.api0.assert_get('k', 'pipeline')
+    #     self.api1.assert_get('k', 'pipeline')
 
-    def test_tarpit(self):
-        self.api0._send('s')
-        time.sleep(0.25)
-        self.api0._send('e')
-        time.sleep(0.25)
-        self.api0._send('t')
-        time.sleep(0.25)
-        self.api0._send(' ')
-        time.sleep(0.25)
-        self.api0._send('tar')
-        time.sleep(0.5)
-        self.api0._send(' ')
-        time.sleep(0.25)
-        self.api0._send('pit')
-        time.sleep(0.25)
-        self.api0._send('\n')
+    # def test_tarpit(self):
+    #     self.api0._send('s')
+    #     time.sleep(0.25)
+    #     self.api0._send('e')
+    #     time.sleep(0.25)
+    #     self.api0._send('t')
+    #     time.sleep(0.25)
+    #     self.api0._send(' ')
+    #     time.sleep(0.25)
+    #     self.api0._send('tar')
+    #     time.sleep(0.5)
+    #     self.api0._send(' ')
+    #     time.sleep(0.25)
+    #     self.api0._send('pit')
+    #     time.sleep(0.25)
+    #     self.api0._send('\n')
 
-    def test_multi_connection_partial_tarpit(self):
-        self.api0.assert_get('tar', 'null')
-        self.api1.assert_get('tar', 'null')
-        self.api0._send('s')
-        self.api1._send('g')
-        time.sleep(0.25)
-        self.api0._send('e')
-        self.api1._send('e')
-        time.sleep(0.25)
-        self.api0._send('t')
-        self.api1._send('t')
-        time.sleep(0.25)
-        self.api0._send(' ')
-        self.api1._send(' ')
-        time.sleep(0.25)
-        self.api0._send('tar')
-        self.api1._send('tar')
-        time.sleep(0.25)
-        self.api0._send(' ')
-        time.sleep(0.25)
-        self.api0._send('pit')
-        time.sleep(0.25)
-        self.api0._send('\n')
-        self.api0.assert_recv_msg('tar', 'pit')
-        self.api1._send('\n')
-        self.api1.assert_recv_msg('tar', 'pit')
+    # def test_multi_connection_partial_tarpit(self):
+    #     self.api0.assert_get('tar', 'null')
+    #     self.api1.assert_get('tar', 'null')
+    #     self.api0._send('s')
+    #     self.api1._send('g')
+    #     time.sleep(0.25)
+    #     self.api0._send('e')
+    #     self.api1._send('e')
+    #     time.sleep(0.25)
+    #     self.api0._send('t')
+    #     self.api1._send('t')
+    #     time.sleep(0.25)
+    #     self.api0._send(' ')
+    #     self.api1._send(' ')
+    #     time.sleep(0.25)
+    #     self.api0._send('tar')
+    #     self.api1._send('tar')
+    #     time.sleep(0.25)
+    #     self.api0._send(' ')
+    #     time.sleep(0.25)
+    #     self.api0._send('pit')
+    #     time.sleep(0.25)
+    #     self.api0._send('\n')
+    #     self.api0.assert_recv_msg('tar', 'pit')
+    #     self.api1._send('\n')
+    #     self.api1.assert_recv_msg('tar', 'pit')
 
-    def test_multi_connection_tarpit(self):
-        apis = []
-        for i in range(10):
-            api = EpochAPI(LIST_ADDR, LIST_PORT)
-            api.assert_get('bar', 'null')
-            api._send('set ')
-            time.sleep(0.25)
-            api._send('foo ')
-            time.sleep(0.25)
-            #no newline
-            api._send('barbaz')
-            apis.append(api)
+    # def test_multi_connection_tarpit(self):
+    #     apis = []
+    #     for i in range(10):
+    #         api = EpochAPI(LIST_ADDR, LIST_PORT)
+    #         api.assert_get('bar', 'null')
+    #         api._send('set ')
+    #         time.sleep(0.25)
+    #         api._send('foo ')
+    #         time.sleep(0.25)
+    #         #no newline
+    #         api._send('barbaz')
+    #         apis.append(api)
 
-        for a in [self.api0, self.api1]:
-            a.assert_get('foo', 'null')
-            a.assert_set('foo', 'baz')
-            a.assert_get('foo', 'baz')
-            a.assert_set('foo', 'quz')
-            a.assert_get('foo', 'quz')
-            a.assert_set('foo', 'null')
-            a.assert_get('foo', 'null')
+    #     for a in [self.api0, self.api1]:
+    #         a.assert_get('foo', 'null')
+    #         a.assert_set('foo', 'baz')
+    #         a.assert_get('foo', 'baz')
+    #         a.assert_set('foo', 'quz')
+    #         a.assert_get('foo', 'quz')
+    #         a.assert_set('foo', 'null')
+    #         a.assert_get('foo', 'null')
 
-        for a in apis:
-            a._send('qux\n')
-            a.assert_recv_msg('foo', 'barbazqux')
-            a.assert_get('foo', 'barbazqux')
-            self.api0.assert_get('foo', 'barbazqux')
-            self.api0.assert_set('foo', 'foo')
-            self.api1.assert_get('foo', 'foo')
-            self.api1.assert_set('foo', 'barbazqux')
-            self.api0.assert_get('foo', 'barbazqux')
+    #     for a in apis:
+    #         a._send('qux\n')
+    #         a.assert_recv_msg('foo', 'barbazqux')
+    #         a.assert_get('foo', 'barbazqux')
+    #         self.api0.assert_get('foo', 'barbazqux')
+    #         self.api0.assert_set('foo', 'foo')
+    #         self.api1.assert_get('foo', 'foo')
+    #         self.api1.assert_set('foo', 'barbazqux')
+    #         self.api0.assert_get('foo', 'barbazqux')
 
-        for a in apis:
-            a.assert_quit()
+    #     for a in apis:
+    #         a.assert_quit()
 
-    def test_cross_connection_xfer(self):
-        self.api0.assert_get('foo', 'null')
-        self.api1.assert_get('foo', 'null')
-        self.api0.assert_set('foo', 'bar')
-        self.api1.assert_get('foo', 'bar')
-        self.api1.assert_set('foo', 'baz')
-        self.api0.assert_get('foo', 'baz')
+    # def test_cross_connection_xfer(self):
+    #     self.api0.assert_get('foo', 'null')
+    #     self.api1.assert_get('foo', 'null')
+    #     self.api0.assert_set('foo', 'bar')
+    #     self.api1.assert_get('foo', 'bar')
+    #     self.api1.assert_set('foo', 'baz')
+    #     self.api0.assert_get('foo', 'baz')
 
-    def test_reconnect(self):
-        self.api0.assert_get('foo', 'null')
-        self.api0.assert_set('foo', 'bar')
-        self.api0.assert_quit()
-        self.api0 = EpochAPI(LIST_ADDR, LIST_PORT)
-        self.api0.assert_set('foo', 'bar')
+    # def test_reconnect(self):
+    #     self.api0.assert_get('foo', 'null')
+    #     self.api0.assert_set('foo', 'bar')
+    #     self.api0.assert_quit()
+    #     self.api0 = EpochAPI(LIST_ADDR, LIST_PORT)
+    #     self.api0.assert_set('foo', 'bar')
 
-    def test_many_keys(self):
-        k = lambda i: 'key%s' % i
-        v = lambda i: '%sval' % i
+    # def test_many_keys(self):
+    #     k = lambda i: 'key%s' % i
+    #     v = lambda i: '%sval' % i
 
-        for i in range(1000):
-            a0,a1 = (self.api0, self.api1) if i%2==0 else (self.api1, self.api0)
-            a0.assert_set(k(i), v(i))
-            a1.assert_get(k(i), v(i))
+    #     for i in range(1000):
+    #         a0,a1 = (self.api0, self.api1) if i%2==0 else (self.api1, self.api0)
+    #         a0.assert_set(k(i), v(i))
+    #         a1.assert_get(k(i), v(i))
 
-    def test_multi_threaded(self):
-        def mk_key(tid, reqid):
-            return '%sK%s' % (tid, reqid)
+    # def test_multi_threaded(self):
+    #     def mk_key(tid, reqid):
+    #         return '%sK%s' % (tid, reqid)
 
-        def mk_val(tid, reqid):
-            return '%s%s%s' % (tid,'V'*37, reqid)
+    #     def mk_val(tid, reqid):
+    #         return '%s%s%s' % (tid,'V'*37, reqid)
 
-        def read_thread_target(tid, count, local_api):
-            for i in range(count):
-                local_api.assert_recv_msg(mk_key(tid, i), mk_val(tid,i))
+    #     def read_thread_target(tid, count, local_api):
+    #         for i in range(count):
+    #             local_api.assert_recv_msg(mk_key(tid, i), mk_val(tid,i))
 
-        def write_thread_target(tid, count, local_api):
-            reqs = []
-            for i in range(count):
-                reqs.append('set %s %s' % (mk_key(tid,i), mk_val(tid,i)))
-            local_api._send('\n'.join(reqs) + '\n')
+    #     def write_thread_target(tid, count, local_api):
+    #         reqs = []
+    #         for i in range(count):
+    #             reqs.append('set %s %s' % (mk_key(tid,i), mk_val(tid,i)))
+    #         local_api._send('\n'.join(reqs) + '\n')
 
-        apis = []
-        threads = []
-        thread_pairs=8
-        request_count = 10*1000
+    #     apis = []
+    #     threads = []
+    #     thread_pairs=8
+    #     request_count = 10*1000
 
-        for i in range(request_count):
-            self.api0.assert_set(mk_key('main', i), mk_val('main', i))
+    #     for i in range(request_count):
+    #         self.api0.assert_set(mk_key('main', i), mk_val('main', i))
 
-        for i in range(thread_pairs):
-            local_api = EpochAPI(LIST_ADDR, LIST_PORT)
-            apis.append(local_api)
-            threads.append(threading.Thread(target=read_thread_target, args=(i, request_count, local_api)))
-            threads.append(threading.Thread(target=write_thread_target, args=(i, request_count, local_api)))
+    #     for i in range(thread_pairs):
+    #         local_api = EpochAPI(LIST_ADDR, LIST_PORT)
+    #         apis.append(local_api)
+    #         threads.append(threading.Thread(target=read_thread_target, args=(i, request_count, local_api)))
+    #         threads.append(threading.Thread(target=write_thread_target, args=(i, request_count, local_api)))
 
-        map(lambda t: t.start(), threads)
+    #     map(lambda t: t.start(), threads)
 
-        for i in range(request_count):
-            self.api1.assert_get(mk_key('main', i), mk_val('main', i))
+    #     for i in range(request_count):
+    #         self.api1.assert_get(mk_key('main', i), mk_val('main', i))
 
-        map(lambda t: t.join(), threads)
-        map(lambda a: a.send_quit(), apis)
+    #     map(lambda t: t.join(), threads)
+    #     map(lambda a: a.send_quit(), apis)
 
-        for tid in range(thread_pairs):
-            for req in range(request_count):
-                self.api0.assert_get(mk_key(tid, req), mk_val(tid, req))
+    #     for tid in range(thread_pairs):
+    #         for req in range(request_count):
+    #             self.api0.assert_get(mk_key(tid, req), mk_val(tid, req))
 
 if __name__ == "__main__":
     logging.basicConfig(filename='test.log', filemode='w', level=logging.DEBUG)
