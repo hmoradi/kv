@@ -113,7 +113,6 @@ void * Server::handleRequest(int arg){
 
     char buf[1024];
     int buflen;
-    int wfd;
     std::string message[3];
     rfd = (int)arg;
     for(;;)
