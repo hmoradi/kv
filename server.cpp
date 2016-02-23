@@ -176,7 +176,7 @@ std::string Server::setMap(std::string key, std::string val){
 }
 std::string Server::getMap(std::string key){
     std::cout << "get called with "<< key <<std::endl;
-    std::string val = "NULL"
+    std::string val = "NULL";
     if ( map_.find(key) != map_.end() ) {
         val = map_[key];
     }
