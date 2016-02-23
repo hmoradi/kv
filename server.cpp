@@ -80,11 +80,15 @@ void Server::run() {
     //throw_error("Server::run() is not not implemented", 0);
     while(1){
         pthread_mutex_lock(&mutex_state);
+        std::cout<< "step 1"<<std::endl;
         client_fd = accept_new_connection();
+        std::cout<< "step 2"<<std::endl;
         readThreadParams params;
         params.server_ = this;
         params.client_fd = client_fd;
+        std::cout<< "step 3"<<std::endl;
         pthread_create(&threads[client_fd], NULL, Server::createThread, &params);
+        std::cout<< "step 7"<<std::endl;
         pthread_mutex_unlock(&mutex_state);
     }
 }
@@ -94,13 +98,16 @@ void Server::throw_error(const char* msg_, int errno_) {
     throw std::runtime_error(msg);
 }
 void* Server::createThread(void* arg){
+    std::cout<< "step 4"<<std::endl;
     struct readThreadParams *readParams = (readThreadParams *)arg;
+    std::cout << "created thread, client_fd="<<readParams->client_fd<< std::endl;
     (readParams->server_) -> handleRequest(readParams -> client_fd);
-    std::cout << "created thread, client_fd="<< std::endl;
+    std::cout<< "step 6"<<std::endl;
     return NULL;
 }
 void * Server::handleRequest(int arg){
     //int fd = arg;
+    std::cout<< "step 5"<<std::endl;
     std::cout <<"handle request, fd is "<< arg << std::endl;
     //server_send(fd,"foo==bar\n");
     return NULL;
