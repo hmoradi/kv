@@ -91,7 +91,7 @@ void Server::run() {
         std::cout<< "step 2"<<std::endl;
         struct readThreadParams *params;
 
-        readParams = malloc(sizeof(*params));
+        params = malloc(sizeof(*params));
         params->server_ = this;
         params->client_fd = client_fd;
         std::cout<< "step 3"<<&params<<std::endl;
