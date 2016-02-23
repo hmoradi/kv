@@ -11,6 +11,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+
+//added my header files
+#include <pthread.h>
 namespace EpochLabsTest {
 
 Server::Server(const std::string& listen_address, int listen_port)
@@ -48,6 +51,7 @@ Server::Server(const std::string& listen_address, int listen_port)
 }
 
 int Server::accept_new_connection() {
+    
     sockaddr_in peer_addr;
     socklen_t peer_addr_size = sizeof(peer_addr);
     std::memset(&peer_addr, 0, peer_addr_size);
@@ -66,16 +70,26 @@ int Server::accept_new_connection() {
 
 void Server::run() {
     std::cout << "running ..." << std::endl;
+    pthread_t threads[10];
     //replace with your code to implement the run method
     //run() should loop forever servicing requests/connections
-    throw_error("Server::run() is not not implemented", 0);
+    //throw_error("Server::run() is not not implemented", 0);
+    while(1){
+        client_fd = accept_new_connection();
+        pthread_create(&threads[rfd], NULL, Server::createThread, this);
+    }
 }
 
 void Server::throw_error(const char* msg_, int errno_) {
     std::string msg = msg_ + std::string(" errno=") + std::to_string(errno_);
     throw std::runtime_error(msg);
 }
-
+void* Server::createThread(void* arg){
+    ((Server*)arg) -> handleRequest(((Server*)arg) -> client_fd);
+}
+void * Server::handleRequest(void * arg){
+    int fd = (int) arg;
+}
 }
 
 
