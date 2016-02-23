@@ -154,11 +154,11 @@ void * Server::handleRequest(int arg){
                 quit(rfd);
             }else if(message[0].compare("set") == 0){
                 std::cout<<"inside set" << std::endl;
-                std::string response = set(message[1],message[2]);
+                std::string response = setMap(message[1],message[2]);
                 std::cout<< "response is " << response << std::endl;
                 server_send(rfd,response);
             }else if(message[0].compare("get") == 0){
-                std::string response = get(message[1]);
+                std::string response = getMap(message[1]);
                 std::cout<< "response is " << response << std::endl;
                 server_send(rfd,response);
             }   
@@ -169,12 +169,12 @@ void * Server::handleRequest(int arg){
     }
     return NULL;
 }
-std::string Server::set(std::string key, std::string val){
+std::string Server::setMap(std::string key, std::string val){
     std::cout << "command called with "<< key << "=" << val << std::endl;
     Server::map_[key]=val;
     return key + "=" + val + "\n";
 }
-std::string Server::get(std::string key){
+std::string Server::getMap(std::string key){
     std::cout << "get called with "<< key <<std::endl;
     std::string val = "NULL"
     if ( map_.find(key) != map_.end() ) {

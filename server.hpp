@@ -22,7 +22,8 @@ private:
     void * handleRequest(int arg);
     int server_send(int fd, std::string data);
     int quit(int fd);
-    std::string do_command(std::string key, std::string val);
+    std::string setMap(std::string key, std::string val);
+    std::string getMap (std::string key);
 };
 
 }
