@@ -86,9 +86,11 @@ void Server::throw_error(const char* msg_, int errno_) {
 }
 void* Server::createThread(void* arg){
     ((Server*)arg) -> handleRequest(((Server*)arg) -> client_fd);
+    return NULL;
 }
 void * Server::handleRequest(int arg){
     int fd = arg;
+    return NULL:
 }
 }
 
