@@ -131,13 +131,15 @@ void * Server::handleRequest(int arg){
             while (pch != NULL)
             {
                 message[i]=std::string(pch);
-                std::cout << "rec message from "<<rfd<<"is " <<message[i]<<std::endl;
+                //std::cout << "rec message from "<<rfd<<"is " <<message[i]<<std::endl;
                 pch = strtok (NULL, " ");
                 i++;
             }
+            std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
             if (message[0].compare("quit")){
                 quit(rfd);
             }else if(message[0].compare("set")){
+                std::cout<<"inside set" << std::endl;
                 std::string response = do_command(message[1],message[2]);
                 std::cout<< "response is " << response << std::endl;
                 server_send(rfd,response);
