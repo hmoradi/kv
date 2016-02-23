@@ -139,10 +139,10 @@ class TestServer(unittest.TestCase):
         self.api0.assert_set('a'*100, 'b'*100)
         self.assert_disconnect(self.api0)
 
-    # def test_disconnect_after_get(self):
-    #     self.api0.assert_set('a'*500, 'b'*500)
-    #     self.api0.assert_get('a'*500, 'b'*500)
-    #     self.assert_disconnect(self.api0)
+    def test_disconnect_after_get(self):
+        self.api0.assert_set('a'*500, 'b'*500)
+        self.api0.assert_get('a'*500, 'b'*500)
+        self.assert_disconnect(self.api0)
 
     # def test_example_session(self):
     #     self.api0.assert_set('foo', 'bar')
