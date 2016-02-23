@@ -121,12 +121,7 @@ void * Server::handleRequest(int arg){
         buflen = read(rfd, buf, sizeof(buf));
         if (buflen <= 0)
         {
-            std::cout << "client disconnected. Clearing fd. " << rfd << std::endl ;
-            pthread_mutex_lock(&mutex_state);
-            FD_CLR(rfd, &the_state);      // free fd's from  clients
-            pthread_mutex_unlock(&mutex_state);
-            close(rfd);
-            pthread_exit(NULL);
+            
         }else{
 
             char * pch;
@@ -139,12 +134,26 @@ void * Server::handleRequest(int arg){
                 pch = strtok (NULL, " ");
                 i++;
             }
+            if (message[0].compare("quit")){
+                quit(rfd);
+            }
         }
 
         //do_command (buf,rfd) ;  
 
     }
     return NULL;
+}
+int Server::quit(int client_fd){
+    std::cout << "client disconnected. Clearing fd. " << rfd << std::endl ;
+    pthread_mutex_lock(&mutex_state);
+    FD_CLR(client_fd, &the_state);      // free fd's from  clients
+    pthread_mutex_unlock(&mutex_state);
+    close(client_fd);
+    pthread_exit(NULL);
+}
+int Server::do_command(std::string command){
+
 }
 int Server::server_send(int fd, std::string data){
     int ret;
