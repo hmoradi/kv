@@ -119,10 +119,11 @@ void * Server::handleRequest(int arg){
     for(;;)
     {
         //read incomming message.
+        while()
         buflen = read(rfd, buf, sizeof(buf));
         if (buflen <= 0)
-        {
-            
+        {   
+            quit(rfd);
         }else{
 
             char * pch;
@@ -141,6 +142,8 @@ void * Server::handleRequest(int arg){
                 std::string response = do_command(message[1],message[2]);
                 std::cout<< "response is " << response << std::endl;
                 server_send(rfd,response);
+            }else{
+                std::cout<<"command not match "<<message[0]<<std::endl;
             }
         }
 
