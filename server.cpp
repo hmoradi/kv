@@ -89,11 +89,13 @@ void Server::run() {
 
         pthread_mutex_unlock(&mutex_state); // End the mutex lock
         std::cout<< "step 2"<<std::endl;
-        readThreadParams params;
-        params.server_ = this;
-        params.client_fd = client_fd;
+        struct readThreadParams *params;
+
+        readParams = malloc(sizeof(*params));
+        params->server_ = this;
+        params->client_fd = client_fd;
         std::cout<< "step 3"<<&params<<std::endl;
-        pthread_create(&threads[client_fd], NULL, Server::createThread, &params);
+        pthread_create(&threads[client_fd], NULL, Server::createThread, params);
         std::cout<< "step 7"<<std::endl;
         //pthread_mutex_unlock(&mutex_state);
     }
