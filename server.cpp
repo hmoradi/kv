@@ -89,7 +89,7 @@ void Server::run() {
             throw_error("error accepting connection", errno);
         }
         arg = (void *) clientFD;
-        pthread_create(&threads[rfd], NULL, tcp_server_read, arg);
+        pthread_create(&threads[clientFD], NULL, tcp_server_read, arg);
 
     }
     //throw_error("Server::run() is not not implemented", 0);
