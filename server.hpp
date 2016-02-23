@@ -21,6 +21,7 @@ private:
     static void* createThread(void* arg);
     void * handleRequest(int arg);
     int server_send(int fd, std::string data);
+    int quit(int fd);
 };
 
 }
