@@ -148,7 +148,7 @@ void * Server::handleRequest(int arg){
     return NULL;
 }
 std::string Server::do_command(std::string key, std::string val){
-    m[key]=val;
+    map_[key]=val;
     return key + "=" + val;
 }
 int Server::quit(int client_fd){
