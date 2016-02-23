@@ -98,6 +98,12 @@ void * Server::handleRequest(int arg){
     std::cout <<"fd is "<< fd << std::endl;
     return NULL;
 }
+int Server::server_send(int fd, std::string data){
+    int ret;
+    ret = send(fd, data.c_str(), strlen(data.c_str()),0);
+    //if(ret != strlen(data.c_str()) throw some error;
+    return 0;
+}
 }
 
 
