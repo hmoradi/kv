@@ -126,13 +126,14 @@ void * Server::handleRequest(int arg){
         }else{
 
             char * pch;
+            buf = std::remove(buf, buf+strlen(buf), '\n') = '\0';
             pch = strtok (buf," ");
             int i=0;
             while (pch != NULL)
             {
-                std:string m = std::string(pch);
-                m = m.erase(m.end());
-                message[i]=m;
+               
+                
+                message[i]= std::string(pch);
                 //std::cout << "rec message from "<<rfd<<"is " <<message[i]<<std::endl;
                 pch = strtok (NULL, " ");
                 i++;
