@@ -131,9 +131,9 @@ class TestServer(unittest.TestCase):
         self.api1.assert_quit()
         self.api0.assert_quit()
 
-    # def test_empty_disconnect(self):
-    #     self.assert_disconnect(self.api1)
-    #     self.assert_disconnect(self.api0)
+    def test_empty_disconnect(self):
+         self.assert_disconnect(self.api1)
+         self.assert_disconnect(self.api0)
 
     # def test_disconnect_after_set(self):
     #     self.api0.assert_set('a'*100, 'b'*100)
