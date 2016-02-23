@@ -135,7 +135,7 @@ void * Server::handleRequest(int arg){
                 pch = strtok (NULL, " ");
                 i++;
             }
-            std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
+            //std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
             if (message[0].compare("quit") == 0){
                 std::cout<<"inside quit"<<message[0]<<std::endl;
                 quit(rfd);
