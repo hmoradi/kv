@@ -14,6 +14,7 @@
 
 //added my header files
 #include <pthread.h>
+volatile fd_set the_state;
 pthread_mutex_t mutex_state = PTHREAD_MUTEX_INITIALIZER;
 namespace EpochLabsTest {
 struct readThreadParams {
@@ -82,6 +83,11 @@ void Server::run() {
         pthread_mutex_lock(&mutex_state);
         std::cout<< "step 1"<<std::endl;
         client_fd = accept_new_connection();
+        pthread_mutex_lock(&mutex_state);  // Make sure no 2 threads can create a fd simultanious.
+
+        FD_SET(client_fd, &the_state);  // Add a file descriptor to the FD-set.
+
+        pthread_mutex_unlock(&mutex_state); // End the mutex lock
         std::cout<< "step 2"<<std::endl;
         readThreadParams params;
         params.server_ = this;
