@@ -80,7 +80,7 @@ void Server::run() {
     pthread_t threads[10]; //create 10 handles for threads.
     std::cout << "running ..." << std::endl;
     int clientFD;
-    void *arg;
+    //void *arg;
     //replace with your code to implement the run method
     //run() should loop forever servicing requests/connections
     for(;;){
@@ -127,7 +127,7 @@ void * Server::static_tcp_server_read(void *arg)
 
     char buf[1024];
     int buflen;
-    int wfd;
+    //int wfd;
 
     rfd = (intptr_t)arg;
     for(;;)
