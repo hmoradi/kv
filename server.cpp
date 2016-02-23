@@ -145,16 +145,14 @@ void * Server::handleRequest(int arg){
     return NULL;
 }
 int Server::quit(int client_fd){
-    std::cout << "client disconnected. Clearing fd. " << rfd << std::endl ;
+    std::cout << "client disconnected. Clearing fd. " << client_fd << std::endl ;
     pthread_mutex_lock(&mutex_state);
     FD_CLR(client_fd, &the_state);      // free fd's from  clients
     pthread_mutex_unlock(&mutex_state);
     close(client_fd);
     pthread_exit(NULL);
 }
-int Server::do_command(std::string command){
 
-}
 int Server::server_send(int fd, std::string data){
     int ret;
     ret = send(fd, data.c_str(), strlen(data.c_str()),0);
