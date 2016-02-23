@@ -118,13 +118,9 @@ void Server::throw_error(const char* msg_, int errno_) {
     std::string msg = msg_ + std::string(" errno=") + std::to_string(errno_);
     throw std::runtime_error(msg);
 }
-void * Server::static_tcp_server_read(void *arg)
-/// This function runs in a thread for every client, and reads incomming data.
-/// It also writes the incomming data to all other clients.
-
-{
+void * Server::static_tcp_server_read(void *arg){
     int rfd;
-
+    //TODO : Constant input size gonna be a problem for scalalbitly
     char buf[1024];
     int buflen;
     //int wfd;
@@ -138,23 +134,42 @@ void * Server::static_tcp_server_read(void *arg)
             /* Read error. */
             perror ("read");
             exit (EXIT_FAILURE);
-        }else if (buflen == 0){
-            /* End-of-file. */
-            return NULL;
         }else{
           /* Data read. */
             std::cout << "read value is " << buf << std::endl;
+            char *p = strtok(buf, " ");
+            string command[3]; 
+            for(int i=0;i<2;i++) {
+                std::cout << "read value is " << p << std::endl;
+                p = strtok(NULL, " ");
+                command[i] = std::string(p);
+            }
+            m[command[1]] = command[2];
+            server_send(rfd,std::string(buf))
             return NULL;
         }
 
         // send the data to the other connected clients
         pthread_mutex_lock(&mutex_state);
-
+      
         pthread_mutex_unlock(&mutex_state);
 
     }
     return NULL;
 }
+
+int Server::server_send(int fd, std::string data)
+// This function will send data to the clients fd.
+// data contains the message to be send
+
+{
+    int ret;
+
+    ret = send(fd, data.c_str(), strlen(data.c_str()),0);
+    //if(ret != strlen(data.c_str()) throw some error;
+    return 0;
+}
+ 
 }
 
 
