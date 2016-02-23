@@ -111,10 +111,10 @@ void * Server::handleRequest(int arg){
     
      int rfd;
 
-    char buf[MAXLEN];
+    char buf[1024];
     int buflen;
     int wfd;
-    std::srtring message[3];
+    std::string message[3];
     rfd = (int)arg;
     for(;;)
     {
