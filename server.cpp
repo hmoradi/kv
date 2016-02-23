@@ -90,6 +90,7 @@ void* Server::createThread(void* arg){
 }
 void * Server::handleRequest(int arg){
     int fd = arg;
+    std::cout <<"fd is "<< fd << std::endl;
     return NULL;
 }
 }
