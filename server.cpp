@@ -125,8 +125,9 @@ void * Server::handleRequest(int arg){
             quit(rfd);
         }else{
             std::string s = std::string(buf);
-            std::cout<<"reques is "<<s <<std::endl;
+            std::cout<<"request is "<<s <<std::endl;
             s.erase(s.size()-1);
+            std::cout<< "after erase is "<< s << std::endl;
             std::string delimiter = " ";
             
             size_t pos = 0;
@@ -184,6 +185,7 @@ int Server::server_send(int fd, std::string data){
     int ret;
     std::cout<<"sending message to client"<<fd<<"message is"<<data<<std::endl;
     ret = send(fd, data.c_str(), strlen(data.c_str()),0);
+    std::cout<<"len of sent message  "<<ret <<std::endl;
     if(ret <=0){
        throw_error("could not send to cliend",errno);
     }
