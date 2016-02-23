@@ -137,15 +137,15 @@ void * Server::handleRequest(int arg){
                 int i = 0;
                 while ((pos = s.find(delimiter)) != std::string::npos) {
                     token = s.substr(0, pos);
-                    message[i] = token;
+                    message[i].assign(token);
                     s.erase(0, pos + delimiter.length());
                     i++;
                 }
-                message[i] = s;
+                message[i].assign(s);
             }else{
-                message[0] =  s;
+                message[0].assign(s);
             }
-
+            s.clear();
             
            
             //std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
@@ -161,9 +161,10 @@ void * Server::handleRequest(int arg){
                 std::string response = getMap(message[1]);
                 std::cout<< "response is " << response << std::endl;
                 server_send(rfd,response);
-            }   
+            } 
+
         }
-        s.clear();
+
     }
     return NULL;
 }
