@@ -130,7 +130,7 @@ void * Server::handleRequest(int arg){
             int i=0;
             while (pch != NULL)
             {
-                m = std::string(pch);
+                std:string m = std::string(pch);
                 m = m.erase(m.end());
                 message[i]=m;
                 //std::cout << "rec message from "<<rfd<<"is " <<message[i]<<std::endl;
