@@ -125,6 +125,7 @@ void * Server::handleRequest(int arg){
             quit(rfd);
         }else{
             std::string s = std::string(buf);
+            std::cout<<"reques is "<<s <<std::endl;
             s.erase(s.size()-1);
             std::string delimiter = " ";
 
