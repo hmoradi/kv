@@ -13,7 +13,7 @@ logger = logging.getLogger()
 
 PROG_PATH = './server'
 LIST_ADDR = '127.0.0.1'
-LIST_PORT = '2022'
+LIST_PORT = '2023'
 
 class EpochAPI(object):
     def __init__(self, addr, port):
