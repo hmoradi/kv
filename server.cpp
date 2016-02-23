@@ -16,7 +16,10 @@
 #include <pthread.h>
 pthread_mutex_t mutex_state = PTHREAD_MUTEX_INITIALIZER;
 namespace EpochLabsTest {
-
+struct readThreadParams {
+    Server* server_;
+    int client_fd;
+};
 Server::Server(const std::string& listen_address, int listen_port)
     : listen_fd(-1)
 {
@@ -78,8 +81,11 @@ void Server::run() {
     while(1){
         pthread_mutex_lock(&mutex_state);
         client_fd = accept_new_connection();
-        pthread_create(&threads[client_fd], NULL, Server::createThread, this);
-        //pthread_mutex_unlock(&mutex_state);
+        readThreadParams params;
+        params.server = this;
+        params.client_fd = client_fd;
+        pthread_create(&threads[client_fd], NULL, Server::createThread, &params);
+        pthread_mutex_unlock(&mutex_state);
     }
 }
 
@@ -88,9 +94,9 @@ void Server::throw_error(const char* msg_, int errno_) {
     throw std::runtime_error(msg);
 }
 void* Server::createThread(void* arg){
-    
-    ((Server*)arg) -> handleRequest(((Server*)arg) -> client_fd);
-    std::cout << "created thread, client_fd=" << ((Server*)arg) -> client_fd << std::endl;
+    struct readThreadParams *readParams = context;
+    ((readParams->server_) -> handleRequest(readParams -> client_fd);
+    std::cout << "created thread, client_fd="<< std::endl;
     return NULL;
 }
 void * Server::handleRequest(int arg){
