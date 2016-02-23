@@ -80,7 +80,7 @@ void Server::run() {
     //run() should loop forever servicing requests/connections
     //throw_error("Server::run() is not not implemented", 0);
     while(1){
-        pthread_mutex_lock(&mutex_state);
+        //pthread_mutex_lock(&mutex_state);
         std::cout<< "step 1"<<std::endl;
         client_fd = accept_new_connection();
         pthread_mutex_lock(&mutex_state);  // Make sure no 2 threads can create a fd simultanious.
@@ -95,7 +95,7 @@ void Server::run() {
         std::cout<< "step 3"<<std::endl;
         pthread_create(&threads[client_fd], NULL, Server::createThread, &params);
         std::cout<< "step 7"<<std::endl;
-        pthread_mutex_unlock(&mutex_state);
+        //pthread_mutex_unlock(&mutex_state);
     }
 }
 
