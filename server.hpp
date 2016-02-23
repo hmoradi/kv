@@ -17,7 +17,7 @@ private:
     int accept_new_connection();
     void throw_error(const char* msg_, int errno_);
     //add your methods here
-    void* tcp_server_read (void* arg);
+    static void * static_tcp_server_read(void * c);
 };
 
 }

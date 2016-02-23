@@ -88,7 +88,7 @@ void Server::run() {
         if (clientFD < 0){
             throw_error("error accepting connection", errno);
         }
-        arg = (void *) clientFD;
+        arg = (intptr_t *) clientFD;
         pthread_create(&threads[clientFD], NULL, tcp_server_read, arg);
 
     }
@@ -129,7 +129,7 @@ void * Server::tcp_server_read(void *arg)
     int buflen;
     int wfd;
 
-    rfd = (int)arg;
+    rfd = (intptr_t)arg;
     for(;;)
     {
         //read incomming message.
