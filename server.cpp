@@ -78,8 +78,8 @@ void Server::run() {
     while(1){
         pthread_mutex_lock(&mutex_state);
         client_fd = accept_new_connection();
-        pthread_mutex_unlock(&mutex_state);
         pthread_create(&threads[client_fd], NULL, Server::createThread, this);
+        pthread_mutex_unlock(&mutex_state);
     }
 }
 
@@ -88,10 +88,9 @@ void Server::throw_error(const char* msg_, int errno_) {
     throw std::runtime_error(msg);
 }
 void* Server::createThread(void* arg){
-    pthread_mutex_lock(&mutex_state);
+    
     ((Server*)arg) -> handleRequest(((Server*)arg) -> client_fd);
     std::cout << "created thread, client_fd=" << ((Server*)arg) -> client_fd << std::endl;
-    pthread_mutex_unlock(&mutex_state);
     return NULL;
 }
 void * Server::handleRequest(int arg){
