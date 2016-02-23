@@ -127,17 +127,17 @@ class TestServer(unittest.TestCase):
         time.sleep(1)
         assert self.p.poll() == None
         
-    # def test_empty_quit(self):
-    #     self.api1.assert_quit()
-    #     self.api0.assert_quit()
+    def test_empty_quit(self):
+        self.api1.assert_quit()
+        self.api0.assert_quit()
 
-    # def test_empty_disconnect(self):
-    #      self.assert_disconnect(self.api1)
-    #      self.assert_disconnect(self.api0)
+    def test_empty_disconnect(self):
+         self.assert_disconnect(self.api1)
+         self.assert_disconnect(self.api0)
 
     def test_disconnect_after_set(self):
         self.api0.assert_set('a'*10, 'b'*10)
-       # self.assert_disconnect(self.api0)
+        self.assert_disconnect(self.api0)
 
     # def test_disconnect_after_get(self):
     #     self.api0.assert_set('a'*500, 'b'*500)
