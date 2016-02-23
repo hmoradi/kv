@@ -145,7 +145,7 @@ void * Server::handleRequest(int arg){
                 std::cout<< "response is " << response << std::endl;
                 server_send(rfd,response);
             }else{
-                std::cout<<"command not match "<<message[0]<<std::endl;
+                std::cout<<"command not match "<<message[0] << " " <<message[0].size()<<std::endl;
             }
         }
 
