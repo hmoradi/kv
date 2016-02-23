@@ -11,6 +11,18 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+
+
+
+#include <netdb.h>
+#include <pthread.h>
+#include <vector>
+#include <list>
+#include <iterator>
+#include <sstream>
+#include <errno.h>
+
+pthread_mutex_t mutex_state = PTHREAD_MUTEX_INITIALIZER;
 namespace EpochLabsTest {
 
 Server::Server(const std::string& listen_address, int listen_port)
@@ -65,44 +77,84 @@ int Server::accept_new_connection() {
 }
 
 void Server::run() {
+    pthread_t threads[10]; //create 10 handles for threads.
     std::cout << "running ..." << std::endl;
+    int clientFD;
+    void *arg;
     //replace with your code to implement the run method
     //run() should loop forever servicing requests/connections
-    for(int i=0;i<4;i++){
-        int clientFD = accept_new_connection();
+    for(;;){
+        clientFD = accept_new_connection();
         if (clientFD < 0){
             throw_error("error accepting connection", errno);
         }
-        read_from_client(clientFD);
+        arg = (void *) clientFD;
+        pthread_create(&threads[rfd], NULL, tcp_server_read, arg);
 
     }
     //throw_error("Server::run() is not not implemented", 0);
       //  }
 }
-int Server::read_from_client (int filedes){
-  char buffer[1024];
-  int nbytes;
+// int Server::read_from_client (int filedes){
+//   char buffer[1024];
+//   int nbytes;
 
-  nbytes = read (filedes, buffer, 1024);
-  if (nbytes < 0){
-      /* Read error. */
-      perror ("read");
-      exit (EXIT_FAILURE);
-  }else if (nbytes == 0){
-    /* End-of-file. */
-    return -1;
-    }else{
-      /* Data read. */
-        std::cout << "read value is " << buffer << std::endl;
-        return 0;
-    }
-}
+//   nbytes = read (filedes, buffer, 1024);
+//   if (nbytes < 0){
+//       /* Read error. */
+//       perror ("read");
+//       exit (EXIT_FAILURE);
+//   }else if (nbytes == 0){
+//     /* End-of-file. */
+//     return -1;
+//     }else{
+//       /* Data read. */
+//         std::cout << "read value is " << buffer << std::endl;
+//         return 0;
+//     }
+// }
 
 void Server::throw_error(const char* msg_, int errno_) {
     std::string msg = msg_ + std::string(" errno=") + std::to_string(errno_);
     throw std::runtime_error(msg);
 }
+void * Server::tcp_server_read(void *arg)
+/// This function runs in a thread for every client, and reads incomming data.
+/// It also writes the incomming data to all other clients.
 
+{
+    int rfd;
+
+    char buf[1024];
+    int buflen;
+    int wfd;
+
+    rfd = (int)arg;
+    for(;;)
+    {
+        //read incomming message.
+        buflen = read(rfd, buf, sizeof(buf));
+        if (buflen < 0){
+            /* Read error. */
+            perror ("read");
+            exit (EXIT_FAILURE);
+        }else if (buflen == 0){
+            /* End-of-file. */
+            return -1;
+        }else{
+          /* Data read. */
+            std::cout << "read value is " << buf << std::endl;
+            return 0;
+        }
+
+        // send the data to the other connected clients
+        pthread_mutex_lock(&mutex_state);
+
+        pthread_mutex_unlock(&mutex_state);
+
+    }
+    return NULL;
+}
 }
 
 
