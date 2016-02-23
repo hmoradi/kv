@@ -140,11 +140,11 @@ void * Server::static_tcp_server_read(void *arg)
             exit (EXIT_FAILURE);
         }else if (buflen == 0){
             /* End-of-file. */
-            return -1;
+            return NULL;
         }else{
           /* Data read. */
             std::cout << "read value is " << buf << std::endl;
-            return 0;
+            return NULL;
         }
 
         // send the data to the other connected clients
