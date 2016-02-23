@@ -101,7 +101,9 @@ void * Server::handleRequest(int arg){
 int Server::server_send(int fd, std::string data){
     int ret;
     ret = send(fd, data.c_str(), strlen(data.c_str()),0);
-    //if(ret != strlen(data.c_str()) throw some error;
+    if(ret != strlen(data.c_str()){
+       throw_error("could not send to cliend",errno);
+    }
     return 0;
 }
 }
