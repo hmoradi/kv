@@ -2,7 +2,7 @@
 #define EPOCHLABS_TEST_SERVER_HPP
 
 #include <string>
-
+#include <map>
 namespace EpochLabsTest {
 
 class Server {
@@ -14,7 +14,7 @@ private:
     int listen_fd;
     //add your members here
     int client_fd;
-
+    static std:map<std::string,std::string> map_;
     int accept_new_connection();
     void throw_error(const char* msg_, int errno_);
     //add your methods here

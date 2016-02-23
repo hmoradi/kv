@@ -108,7 +108,43 @@ void* Server::createThread(void* arg){
 void * Server::handleRequest(int arg){
     //int fd = arg;
     std::cout <<"handle request, fd is "<< arg << std::endl;
-    //server_send(fd,"foo==bar\n");
+    
+     int rfd;
+
+    char buf[MAXLEN];
+    int buflen;
+    int wfd;
+    std::srtring message[3];
+    rfd = (int)arg;
+    for(;;)
+    {
+        //read incomming message.
+        buflen = read(rfd, buf, sizeof(buf));
+        if (buflen <= 0)
+        {
+            std::cout << "client disconnected. Clearing fd. " << rfd << std::endl ;
+            pthread_mutex_lock(&mutex_state);
+            FD_CLR(rfd, &the_state);      // free fd's from  clients
+            pthread_mutex_unlock(&mutex_state);
+            close(rfd);
+            pthread_exit(NULL);
+        }else{
+
+            char * pch;
+            pch = strtok (buf," ");
+            int i=0;
+            while (pch != NULL)
+            {
+                message[i]=std::string(pch);
+                std::cout << "rec message from "<<rfd<<"is" <<message[i]<<std::endl;
+                pch = strtok (NULL, " ");
+                i++;
+            }
+        }
+
+        //do_command (buf,rfd) ;  
+
+    }
     return NULL;
 }
 int Server::server_send(int fd, std::string data){
