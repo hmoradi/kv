@@ -12,7 +12,7 @@
 #include <sys/socket.h>
 
 
-
+#include <map>
 #include <stdint.h>
 #include <netdb.h>
 #include <pthread.h>
@@ -138,7 +138,7 @@ void * Server::static_tcp_server_read(void *arg){
           /* Data read. */
             std::cout << "read value is " << buf << std::endl;
             char *p = strtok(buf, " ");
-            string command[3]; 
+            std::string command[3]; 
             for(int i=0;i<2;i++) {
                 std::cout << "read value is " << p << std::endl;
                 p = strtok(NULL, " ");
