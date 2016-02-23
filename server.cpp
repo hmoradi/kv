@@ -130,7 +130,7 @@ void * Server::handleRequest(int arg){
             std::string delimiter = " ";
             
             size_t pos = 0;
-            if((pos = s.find(delimiter)) != std::string::npos)){
+            if((pos = s.find(delimiter)) != std::string::npos){
                 std::string token;
             
                 int i = 0;
