@@ -170,7 +170,7 @@ void * Server::handleRequest(int arg){
     return NULL;
 }
 std::string Server::setMap(std::string key, std::string val){
-    std::cout << "command called with "<< key << "=" << val << std::endl;
+    std::cout << "set called with "<< key << "=" << val << std::endl;
     Server::map_[key]=val;
     return key + "=" + val + "\n";
 }
