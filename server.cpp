@@ -89,7 +89,7 @@ void Server::run() {
             throw_error("error accepting connection", errno);
         }
         arg = (intptr_t *) clientFD;
-        pthread_create(&threads[clientFD], NULL, Server::tcp_server_read, arg);
+        pthread_create(&threads[clientFD], NULL, Server::static_tcp_server_read, arg);
 
     }
     //throw_error("Server::run() is not not implemented", 0);
@@ -118,7 +118,7 @@ void Server::throw_error(const char* msg_, int errno_) {
     std::string msg = msg_ + std::string(" errno=") + std::to_string(errno_);
     throw std::runtime_error(msg);
 }
-void * Server::tcp_server_read(void *arg)
+void * Server::static_tcp_server_read(void *arg)
 /// This function runs in a thread for every client, and reads incomming data.
 /// It also writes the incomming data to all other clients.
 
