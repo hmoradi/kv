@@ -1,3 +1,5 @@
+#include "server.hpp"
+
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -9,17 +11,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-
-#include <stdint.h>
-#include <netdb.h>
-#include <pthread.h>
-#include <vector>
-#include <list>
-#include <iterator>
-#include <sstream>
-#include <errno.h>
-
-pthread_mutex_t mutex_state = PTHREAD_MUTEX_INITIALIZER;
 namespace EpochLabsTest {
 
 Server::Server(const std::string& listen_address, int listen_port)
@@ -74,81 +65,17 @@ int Server::accept_new_connection() {
 }
 
 void Server::run() {
-    pthread_t threads[10]; //create 10 handles for threads.
     std::cout << "running ..." << std::endl;
-    //int clientFD;
-    //void *arg;
     //replace with your code to implement the run method
     //run() should loop forever servicing requests/connections
-    for(;;){
-        clientFD = accept_new_connection();
-        if (clientFD < 0){
-            throw_error("error accepting connection", errno);
-        }
-        //arg = (intptr_t *) clientFD;
-        pthread_create(&threads[clientFD], NULL, Server::static_tcp_server_read, this);
-
-    }
-    //throw_error("Server::run() is not not implemented", 0);
-      //  }
+    throw_error("Server::run() is not not implemented", 0);
 }
 
 void Server::throw_error(const char* msg_, int errno_) {
     std::string msg = msg_ + std::string(" errno=") + std::to_string(errno_);
     throw std::runtime_error(msg);
 }
-void * Server::static_tcp_server_read(void* arg){
-     ((Server*) arg ->tcp_server_read((Server*) arg->clientFD);
-     return NULL;
-}
-void * Server::tcp_server_read(int rfd){
-    int rfd;
-    //TODO : Constant input size gonna be a problem for scalalbitly
-    char buf[1024];
-    int buflen;
-    //int wfd;
 
-    rfd = (intptr_t)arg;
-    for(;;)
-    {
-        //read incomming message.
-        buflen = read(rfd, buf, sizeof(buf));
-        if (buflen < 0){
-            /* Read error. */
-            perror ("read");
-            exit (EXIT_FAILURE);
-        }else{
-          /* Data read. */
-            std::cout << "read value is " << buf << std::endl;
-            char *p = strtok(buf, " ");
-            std::string command[3]; 
-            for(int i=0;i<2;i++) {
-                std::cout << "read value is " << p << std::endl;
-                p = strtok(NULL, " ");
-                command[i] = std::string(p);
-            }
-            m[command[1]] = command[2];
-            server_send(rfd,std::string(buf))
-            return NULL;
-        }
-
-        // send the data to the other connected clients
-        pthread_mutex_lock(&mutex_state);
-      
-        pthread_mutex_unlock(&mutex_state);
-
-    }
-    return NULL;
-}
- 
-int Server::server_send(int fd, std::string data){
-    int ret;
-
-    ret = send(fd, data.c_str(), strlen(data.c_str()),0);
-    //if(ret != strlen(data.c_str()) throw some error;
-    return 0;
-}
- 
 }
 
 
