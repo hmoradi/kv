@@ -12,6 +12,7 @@ public:
   
 private:
     int listen_fd;
+    int clientFD;
     std::map<std::string, std::string> m;
     //add your members here
 
@@ -20,6 +21,7 @@ private:
     int server_send(int fd, std::string data);
     //add your methods here
     static void * static_tcp_server_read(void * c);
+    void * tcp_server_read(int rfd);
 };
 
 }
