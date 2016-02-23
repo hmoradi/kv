@@ -136,6 +136,9 @@ void * Server::handleRequest(int arg){
             }
             if (message[0].compare("quit")){
                 quit(rfd);
+            }else if(message[0].compare("set")){
+                std::string response = do_command(message[1],message[2]);
+                server_send(rfd,response);
             }
         }
 
@@ -143,6 +146,10 @@ void * Server::handleRequest(int arg){
 
     }
     return NULL;
+}
+std::string Server::do_command(std::string key, std::string val){
+    m[key]=val;
+    return key + "=" + val;
 }
 int Server::quit(int client_fd){
     std::cout << "client disconnected. Clearing fd. " << client_fd << std::endl ;
@@ -155,6 +162,7 @@ int Server::quit(int client_fd){
 
 int Server::server_send(int fd, std::string data){
     int ret;
+    std::cout<<"sending message to client"<<fd<<"message is"<<data<<std::endl;
     ret = send(fd, data.c_str(), strlen(data.c_str()),0);
     if(ret <=0){
        throw_error("could not send to cliend",errno);
