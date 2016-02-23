@@ -170,7 +170,7 @@ void * Server::handleRequest(int arg){
 std::string Server::do_command(std::string key, std::string val){
     std::cout << "command called with "<< key << "=" << val << std::endl;
     Server::map_[key]=val;
-    return key + "=" + val;
+    return key + "=" + val + "\n";
 }
 int Server::quit(int client_fd){
     std::cout << "client disconnected. Clearing fd. " << client_fd << std::endl ;
