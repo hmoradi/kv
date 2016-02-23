@@ -137,6 +137,7 @@ void * Server::handleRequest(int arg){
             }
             std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
             if (message[0].compare("quit")){
+                std::cout<<"inside quit"<<message[0]<<std::endl;
                 quit(rfd);
             }else if(message[0].compare("set")){
                 std::cout<<"inside set" << std::endl;
