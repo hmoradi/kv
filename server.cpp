@@ -21,7 +21,7 @@ struct readThreadParams {
     Server* server_;
     int client_fd;
 };
-static std::map<std::string,std::string> map_;
+static std::map<std::string,std::string> Server::map_;
 Server::Server(const std::string& listen_address, int listen_port)
     : listen_fd(-1)
 {
