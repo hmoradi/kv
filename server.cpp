@@ -244,7 +244,7 @@ int Server::server_send(int fd, std::string data){
     int ret;
     Debug("sending message to client "<<fd<<" message is "<<data);
     ret = send(fd, data.c_str(), strlen(data.c_str()),0);
-    Debug(len of sent message  "<<ret <<std");
+    Debug("len of sent message  "<<ret );
     if(ret <=0){
        throw_error("could not send to cliend",errno);
     }
