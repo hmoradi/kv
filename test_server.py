@@ -297,21 +297,21 @@ class TestServer(unittest.TestCase):
     #     self.api1.assert_set('foo', 'baz')
     #     self.api0.assert_get('foo', 'baz')
 
-    def test_reconnect(self):
-        self.api0.assert_get('foo', 'null')
-        self.api0.assert_set('foo', 'bar')
-        self.api0.assert_quit()
-        self.api0 = EpochAPI(LIST_ADDR, LIST_PORT)
-        self.api0.assert_set('foo', 'bar')
+    # def test_reconnect(self):
+    #     self.api0.assert_get('foo', 'null')
+    #     self.api0.assert_set('foo', 'bar')
+    #     self.api0.assert_quit()
+    #     self.api0 = EpochAPI(LIST_ADDR, LIST_PORT)
+    #     self.api0.assert_set('foo', 'bar')
 
-    # def test_many_keys(self):
-    #     k = lambda i: 'key%s' % i
-    #     v = lambda i: '%sval' % i
+    def test_many_keys(self):
+        k = lambda i: 'key%s' % i
+        v = lambda i: '%sval' % i
 
-    #     for i in range(1000):
-    #         a0,a1 = (self.api0, self.api1) if i%2==0 else (self.api1, self.api0)
-    #         a0.assert_set(k(i), v(i))
-    #         a1.assert_get(k(i), v(i))
+        for i in range(1000):
+            a0,a1 = (self.api0, self.api1) if i%2==0 else (self.api1, self.api0)
+            a0.assert_set(k(i), v(i))
+            a1.assert_get(k(i), v(i))
 
     # def test_multi_threaded(self):
     #     def mk_key(tid, reqid):
