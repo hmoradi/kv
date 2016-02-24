@@ -148,7 +148,7 @@ void * Server::handleRequest(int arg){
             }
             if(s.size()>0){
                 //lines[i].assign(s);
-                truncatedCommand.assign(s);    
+                truncatedCommand += s;    
             }
             
             std::string response ;
