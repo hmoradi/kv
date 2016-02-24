@@ -126,26 +126,23 @@ void * Server::handleRequest(int arg){
         }else{
             std::string s = std::string(buf);
             std::cout<<"request is "<<s <<std::endl;
-            //s.erase(s.size()-1);
-            //std::cout<< "after erase is "<< s << std::endl;
-            ///////\
+            
             std::string lineDelimiter = "\n";
             size_t pos = 0;
             std::string line;
             std::string lines[1024] ;
             int i = 0;
-            while ((pos = s.find(delimiter)) != std::string::npos) {
+            while ((pos = s.find(lineDelimiter)) != std::string::npos) {
                 line = s.substr(0, pos);
                 lines[i].assign(line);
-                s.erase(0, pos + delimiter.length());
+                s.erase(0, pos + lineDelimiter.length());
                 i++;
             }
             if(s.size()>0){
                 lines[i].assign(s);    
             }
             
-            ///////
-            std::string respons ;
+            std::string response ;
             for(int j=0;j< i;j++){
                 std::string delimiter = " ";
             
