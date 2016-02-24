@@ -195,8 +195,11 @@ void * Server::handleRequest(int arg){
                 } 
                 
             }
-            server_send(rfd,response);
-            response.clear();
+            if(response.size()>0){
+                server_send(rfd,response);
+                response.clear();    
+            }
+            
 
         }
         char *begin = &buf[0];
