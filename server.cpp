@@ -168,6 +168,7 @@ void * Server::handleRequest(int arg){
     std::string cmndContent[3];
     std::string lines[1024];
     int numberOfCmnds;
+    std::string response ;
     rfd = (int)arg;
     std::string truncatedCommand;
     for(;;)
@@ -180,8 +181,7 @@ void * Server::handleRequest(int arg){
         }else{
             
             extractCmnds(buf,truncatedCommand,lines,numberOfCmnds);
-             = _countof(lines);
-            std::string response ;
+            
             Debug("client "<<rfd <<" request has "<<numberOfCmnds<<"number of commands ");
             
             for(int cmndIndex=0;cmndIndex< numberOfCmnds;cmndIndex++){
