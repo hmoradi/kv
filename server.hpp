@@ -13,7 +13,8 @@ public:
 private:
     int listen_fd;
     //add your members here
-    int client_fd;
+    int readers;
+    int writers;
     static std::map<std::string,std::string> map_;
     int accept_new_connection();
     void throw_error(const char* msg_, int errno_);

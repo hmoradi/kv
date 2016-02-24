@@ -24,6 +24,8 @@
 #endif
 volatile fd_set the_state;
 pthread_mutex_t mutex_state = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t readersQ = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t writersQ = PTHREAD_MUTEX_INITIALIZER;
 namespace EpochLabsTest {
 struct readThreadParams {
     Server* server_;
@@ -171,9 +173,7 @@ void Server::processCmnd(std::string* cmndContent, std::string& response,int rfd
 
 }
 void * Server::handleRequest(int rfd){
-    //int fd = arg;
-    //std::cout <<"handle request, fd is "<< arg << std::endl;
-
+    
     char buf[1024];
     int buflen;
     std::string cmndContent[3];
@@ -195,17 +195,13 @@ void * Server::handleRequest(int rfd){
             Debug("client "<<rfd <<" request has "<<numberOfCmnds<<"number of commands ");
             
             for(int cmndIndex=0;cmndIndex< numberOfCmnds;cmndIndex++){
-             
                 parseCmnd(cmnds[cmndIndex],cmndContent);
-                processCmnd(cmndContent,response,rfd);
-                
+                processCmnd(cmndContent,response,rfd); 
             }
             if(response.size()>0){
                 server_send(rfd,response);
                 response.clear();    
             }
-            
-
         }
         char *begin = &buf[0];
         char *end = begin + sizeof(buf);
@@ -216,7 +212,22 @@ void * Server::handleRequest(int rfd){
 std::string Server::setMap(std::string key, std::string val){
     Debug("set called with "<< key << "=" << val);
     pthread_mutex_lock(&mutex_state);
+    writers++;
+    while (!((readers == 0) && (active_writers == 0))) {
+        pthread_cond_wait(&writersQ, &m);
+    }
+    active_writers++;
+    pthread_mutex_unlock(&mutex_state);
+
     Server::map_[key]=val;
+
+    pthread_mutex_lock(&mutex_state);
+    writers--;
+    active_writers--;
+    if (writers > 0)
+        pthread_cond_signal(&writersQ);
+    else
+        pthread_cond_broadcast(&readersQ);
     pthread_mutex_unlock(&mutex_state);
     return key + "=" + val + "\n";
 
@@ -224,11 +235,23 @@ std::string Server::setMap(std::string key, std::string val){
 std::string Server::getMap(std::string key){
     Debug("get called with "<< key);
     std::string val = "null";
-    pthread_mutex_lock(&mutex_state);
-    if ( map_.find(key) != map_.end() ) {
+     pthread_mutex_lock(&mutex_state);
+     while (!(writers == 0))
+     pthread_cond_wait(&readersQ, &m);
+     readers++;
+     pthread_mutex_unlock(&mutex_state);
+
+     if ( map_.find(key) != map_.end() ) {
         val = map_[key];
     }
-    pthread_mutex_unlock(&mutex_state);
+
+     pthread_mutex_lock(&mutex_state);
+     if (--readers == 0)
+     pthread_cond_signal(&writersQ);
+     pthread_mutex_unlock(&mutex_state);
+    //pthread_mutex_lock(&mutex_state);
+    
+    //pthread_mutex_unlock(&mutex_state);
     return key + "=" + val + "\n";
 }
 int Server::quit(int client_fd){
