@@ -125,7 +125,7 @@ void * Server::handleRequest(int arg){
             quit(rfd);
         }else{
             std::string s = std::string(buf);
-            std::cout<<"clinet "<<rfd<< " requested "<< s <<std::endl;
+            std::cout<<"clinet "<<rfd<< "in the length of"<<s.size()<<" "<<buflen<< " requested "<< s <<std::endl;
             
             std::string lineDelimiter = "\n";
             size_t pos = 0;
