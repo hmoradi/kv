@@ -152,7 +152,7 @@ void Server::parseCmnd(std::string cmnd, std::string * cmndContent){
     }
 }
 
-void Server::processCmnd(std::string* cmndContent, std::string& response){
+void Server::processCmnd(std::string* cmndContent, std::string& response,int rfd){
     if (cmndContent[0].compare("quit") == 0){
         Debug("inside quit");
         if (response.size()>0){
@@ -200,7 +200,7 @@ void * Server::handleRequest(int arg){
             for(int cmndIndex=0;cmndIndex< numberOfCmnds;cmndIndex++){
              
                 parseCmnd(cmnds[cmndIndex],cmndContent);
-                processCmnd(cmndContent,response);
+                processCmnd(cmndContent,response,rfd);
                 
             }
             if(response.size()>0){

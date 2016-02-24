@@ -26,7 +26,7 @@ private:
     std::string getMap (std::string key);
     void extractCmnds(char* buf , std::string & truncatedCommand , std::string * lines,int& numOfCmnds);
     void parseCmnd(std::string cmnd,std::string* cmndContent);
-    void processCmnd(std::string* cmndContent, std::string& response);
+    void processCmnd(std::string* cmndContent, std::string& response,int rfd);
 };
 
 }
