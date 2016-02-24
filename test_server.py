@@ -254,48 +254,48 @@ class TestServer(unittest.TestCase):
     #     self.api1._send('\n')
     #     self.api1.assert_recv_msg('tar', 'pit')
 
-    def test_multi_connection_tarpit(self):
-        apis = []
-        for i in range(10):
-            api = EpochAPI(LIST_ADDR, LIST_PORT)
-            api.assert_get('bar', 'null')
-            api._send('set ')
-            time.sleep(0.25)
-            api._send('foo ')
-            time.sleep(0.25)
-            #no newline
-            api._send('barbaz')
-            apis.append(api)
+    # def test_multi_connection_tarpit(self):
+    #     apis = []
+    #     for i in range(10):
+    #         api = EpochAPI(LIST_ADDR, LIST_PORT)
+    #         api.assert_get('bar', 'null')
+    #         api._send('set ')
+    #         time.sleep(0.25)
+    #         api._send('foo ')
+    #         time.sleep(0.25)
+    #         #no newline
+    #         api._send('barbaz')
+    #         apis.append(api)
 
-        for a in [self.api0, self.api1]:
-            a.assert_get('foo', 'null')
-            a.assert_set('foo', 'baz')
-            a.assert_get('foo', 'baz')
-            a.assert_set('foo', 'quz')
-            a.assert_get('foo', 'quz')
-            a.assert_set('foo', 'null')
-            a.assert_get('foo', 'null')
+    #     for a in [self.api0, self.api1]:
+    #         a.assert_get('foo', 'null')
+    #         a.assert_set('foo', 'baz')
+    #         a.assert_get('foo', 'baz')
+    #         a.assert_set('foo', 'quz')
+    #         a.assert_get('foo', 'quz')
+    #         a.assert_set('foo', 'null')
+    #         a.assert_get('foo', 'null')
 
-        for a in apis:
-            a._send('qux\n')
-            a.assert_recv_msg('foo', 'barbazqux')
-            a.assert_get('foo', 'barbazqux')
-            self.api0.assert_get('foo', 'barbazqux')
-            self.api0.assert_set('foo', 'foo')
-            self.api1.assert_get('foo', 'foo')
-            self.api1.assert_set('foo', 'barbazqux')
-            self.api0.assert_get('foo', 'barbazqux')
+    #     for a in apis:
+    #         a._send('qux\n')
+    #         a.assert_recv_msg('foo', 'barbazqux')
+    #         a.assert_get('foo', 'barbazqux')
+    #         self.api0.assert_get('foo', 'barbazqux')
+    #         self.api0.assert_set('foo', 'foo')
+    #         self.api1.assert_get('foo', 'foo')
+    #         self.api1.assert_set('foo', 'barbazqux')
+    #         self.api0.assert_get('foo', 'barbazqux')
 
-        for a in apis:
-            a.assert_quit()
+    #     for a in apis:
+    #         a.assert_quit()
 
-    # def test_cross_connection_xfer(self):
-    #     self.api0.assert_get('foo', 'null')
-    #     self.api1.assert_get('foo', 'null')
-    #     self.api0.assert_set('foo', 'bar')
-    #     self.api1.assert_get('foo', 'bar')
-    #     self.api1.assert_set('foo', 'baz')
-    #     self.api0.assert_get('foo', 'baz')
+    def test_cross_connection_xfer(self):
+        self.api0.assert_get('foo', 'null')
+        self.api1.assert_get('foo', 'null')
+        self.api0.assert_set('foo', 'bar')
+        self.api1.assert_get('foo', 'bar')
+        self.api1.assert_set('foo', 'baz')
+        self.api0.assert_get('foo', 'baz')
 
     # def test_reconnect(self):
     #     self.api0.assert_get('foo', 'null')
