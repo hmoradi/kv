@@ -14,7 +14,7 @@
 
 //added my header files
 #include <pthread.h>
-
+#include <stdlib.h>
 #define USEDEBUG
 
 #ifdef USEDEBUG
@@ -112,31 +112,52 @@ void* Server::createThread(void* arg){
     return NULL;
 }
 //Extract Commands from socket output
-std::string[] Server::extractLines(char* buff){
-    std::string s = std::string(buf);
-    Debug("clinet "<<rfd<< "in the length of"<<s.size()<< " requested "<< s);
+std::string[] Server::extractCmnds(char* buff , std::string & truncatedCommand){
+    std::string clientRawMessage = std::string(buf);
+    Debug("clinet "<<rfd<< "in the length of"<<clientRawMessage.size()<< " requested "<< s);
     
     std::string lineDelimiter = "\n";
     size_t pos = 0;
     std::string line;
+    //TODO constant value is not scalable
     std::string lines[1024] ;
-    int i = 0;
-    while ((pos = s.find(lineDelimiter)) != std::string::npos) {
-        line = s.substr(0, pos);
+    int numberOfCmnds = 0;
+    while ((pos = clientRawMessage.find(lineDelimiter)) != std::string::npos) {
+        line = clientRawMessage.substr(0, pos);
         if (truncatedCommand.size() >0){
-            lines[i].assign(truncatedCommand + line);
+            lines[numberOfCmnds].assign(truncatedCommand + line);
             truncatedCommand.clear();
         }else{
-            lines[i].assign(line);
+            lines[numberOfCmnds].assign(line);
         }
         
-        s.erase(0, pos + lineDelimiter.length());
-        i++;
+        clientRawMessage.erase(0, pos + lineDelimiter.length());
+        numberOfCmnds++;
     }
-    if(s.size()>0){
-        //lines[i].assign(s);
-        truncatedCommand += s;    
+    if(clientRawMessage.size()>0){
+        truncatedCommand += clientRawMessage;    
     }
+    return lines;
+}
+
+//Parse command line to extract command , key and value
+std::string[] Server::parseCmnd(std::string cmnd){
+    std::string cmndDelimiter = " ";
+    //TODO maybe it can be dynamic allocation
+    std::string cmndContent [3];
+    size_t pos = 0;
+    std::string token;
+    int index = 0;
+    while ((pos = cmnd.find(cmndDelimiter)) != std::string::npos) {
+        token = cmnd.substr(0, pos);
+        cmndContent[index].assign(token);
+        cmnd.erase(0, pos + cmndDelimiter.length());
+        index++;
+    }
+    if (cmnd.size()>0){
+        cmndContent[index].assign(cmnd);
+    }
+    return cmndContent;
 }
 void * Server::handleRequest(int arg){
     //int fd = arg;
@@ -158,49 +179,30 @@ void * Server::handleRequest(int arg){
             quit(rfd);
         }else{
             
-            
+            std::string [] cmnds = extractCmnds(buf,truncatedCommand);
+            int numberOfCmnds = _countof(cmnds);
             std::string response ;
-            std::cout<<"client "<<rfd <<" request has number of commands "<<i<<std::endl;
-            for(int j=0;j< i;j++){
-                std::string delimiter = " ";
+            Debug("client "<<rfd <<" request has "<<numberOfCmnds<<"number of commands ");
             
-                size_t pos = 0;
-                if((pos = lines[j].find(delimiter)) != std::string::npos){
-                    std::string token;
-                
-                    int k = 0;
-                    while ((pos = lines[j].find(delimiter)) != std::string::npos) {
-                        token = lines[j].substr(0, pos);
-                        message[k].assign(token);
-                        lines[j].erase(0, pos + delimiter.length());
-                        k++;
-                    }
-                    message[k].assign(lines[j]);
-                }else{
-                    message[0].assign(lines[j]);
-                }
-                //s.clear();
-                
-               
-                //std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
-                
-                if (message[0].compare("quit") == 0){
-                    std::cout<<"inside quit"<<message[0]<<std::endl;
+            for(int cmndIndex=0;cmndIndex< numberOfCmnds;cmndIndex++){
+             
+                std::string[] cmndParts = parseCmnd(cmnds[cmndIndex]);
+                if (cmndParts[0].compare("quit") == 0){
+                    Debug("inside quit"<<message[0]);
                     if (response.size()>0){
                         server_send(rfd,response);
                         response.clear();
                     }
                     quit(rfd);
-                }else if(message[0].compare("set") == 0){
+                }else if(cmndParts[0].compare("set") == 0){
                     std::cout<<"inside set" << std::endl;
                     response += setMap(message[1],message[2]);
-                    //std::cout<< "response is " << response << std::endl;
-                    //server_send(rfd,response);
-                }else if(message[0].compare("get") == 0){
+                }else if(cmndParts[0].compare("get") == 0){
                     response += getMap(message[1]);
                     std::cout<< "response is " << response << std::endl;
-                    //server_send(rfd,response);
-                } 
+                }else{
+                    throw_error("commnad is wrong");
+                }
                 
             }
             if(response.size()>0){
