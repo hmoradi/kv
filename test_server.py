@@ -304,57 +304,57 @@ class TestServer(unittest.TestCase):
     #     self.api0 = EpochAPI(LIST_ADDR, LIST_PORT)
     #     self.api0.assert_set('foo', 'bar')
 
-    def test_many_keys(self):
-        k = lambda i: 'key%s' % i
-        v = lambda i: '%sval' % i
+    # def test_many_keys(self):
+    #     k = lambda i: 'key%s' % i
+    #     v = lambda i: '%sval' % i
 
-        for i in range(1000):
-            a0,a1 = (self.api0, self.api1) if i%2==0 else (self.api1, self.api0)
-            a0.assert_set(k(i), v(i))
-            a1.assert_get(k(i), v(i))
+    #     for i in range(1000):
+    #         a0,a1 = (self.api0, self.api1) if i%2==0 else (self.api1, self.api0)
+    #         a0.assert_set(k(i), v(i))
+    #         a1.assert_get(k(i), v(i))
 
-    # def test_multi_threaded(self):
-    #     def mk_key(tid, reqid):
-    #         return '%sK%s' % (tid, reqid)
+    def test_multi_threaded(self):
+        def mk_key(tid, reqid):
+            return '%sK%s' % (tid, reqid)
 
-    #     def mk_val(tid, reqid):
-    #         return '%s%s%s' % (tid,'V'*37, reqid)
+        def mk_val(tid, reqid):
+            return '%s%s%s' % (tid,'V'*37, reqid)
 
-    #     def read_thread_target(tid, count, local_api):
-    #         for i in range(count):
-    #             local_api.assert_recv_msg(mk_key(tid, i), mk_val(tid,i))
+        def read_thread_target(tid, count, local_api):
+            for i in range(count):
+                local_api.assert_recv_msg(mk_key(tid, i), mk_val(tid,i))
 
-    #     def write_thread_target(tid, count, local_api):
-    #         reqs = []
-    #         for i in range(count):
-    #             reqs.append('set %s %s' % (mk_key(tid,i), mk_val(tid,i)))
-    #         local_api._send('\n'.join(reqs) + '\n')
+        def write_thread_target(tid, count, local_api):
+            reqs = []
+            for i in range(count):
+                reqs.append('set %s %s' % (mk_key(tid,i), mk_val(tid,i)))
+            local_api._send('\n'.join(reqs) + '\n')
 
-    #     apis = []
-    #     threads = []
-    #     thread_pairs=8
-    #     request_count = 10*1000
+        apis = []
+        threads = []
+        thread_pairs=8
+        request_count = 10*1000
 
-    #     for i in range(request_count):
-    #         self.api0.assert_set(mk_key('main', i), mk_val('main', i))
+        for i in range(request_count):
+            self.api0.assert_set(mk_key('main', i), mk_val('main', i))
 
-    #     for i in range(thread_pairs):
-    #         local_api = EpochAPI(LIST_ADDR, LIST_PORT)
-    #         apis.append(local_api)
-    #         threads.append(threading.Thread(target=read_thread_target, args=(i, request_count, local_api)))
-    #         threads.append(threading.Thread(target=write_thread_target, args=(i, request_count, local_api)))
+        for i in range(thread_pairs):
+            local_api = EpochAPI(LIST_ADDR, LIST_PORT)
+            apis.append(local_api)
+            threads.append(threading.Thread(target=read_thread_target, args=(i, request_count, local_api)))
+            threads.append(threading.Thread(target=write_thread_target, args=(i, request_count, local_api)))
 
-    #     map(lambda t: t.start(), threads)
+        map(lambda t: t.start(), threads)
 
-    #     for i in range(request_count):
-    #         self.api1.assert_get(mk_key('main', i), mk_val('main', i))
+        for i in range(request_count):
+            self.api1.assert_get(mk_key('main', i), mk_val('main', i))
 
-    #     map(lambda t: t.join(), threads)
-    #     map(lambda a: a.send_quit(), apis)
+        map(lambda t: t.join(), threads)
+        map(lambda a: a.send_quit(), apis)
 
-    #     for tid in range(thread_pairs):
-    #         for req in range(request_count):
-    #             self.api0.assert_get(mk_key(tid, req), mk_val(tid, req))
+        for tid in range(thread_pairs):
+            for req in range(request_count):
+                self.api0.assert_get(mk_key(tid, req), mk_val(tid, req))
 
 if __name__ == "__main__":
     logging.basicConfig(filename='test.log', filemode='w', level=logging.DEBUG)
