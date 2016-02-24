@@ -112,14 +112,14 @@ void* Server::createThread(void* arg){
     return NULL;
 }
 //Extract Commands from socket output
-std::string* Server::extractCmnds(char* buf , std::string & truncatedCommand,std::string * lines){
+std::string* Server::extractCmnds(char* buf , std::string & truncatedCommand,std::string * lines,int& numberOfCmnds){
     std::string clientRawMessage = std::string(buf);
     std::string lineDelimiter = "\n";
     size_t pos = 0;
     std::string line;
     //TODO constant value is not scalable
     //std::string lines[1024] ;
-    int numberOfCmnds = 0;
+    numberOfCmnds = 0;
     while ((pos = clientRawMessage.find(lineDelimiter)) != std::string::npos) {
         line = clientRawMessage.substr(0, pos);
         if (truncatedCommand.size() >0){
@@ -167,6 +167,7 @@ void * Server::handleRequest(int arg){
     int buflen;
     std::string cmndContent[3];
     std::string lines[1024];
+    int numberOfCmnds;
     rfd = (int)arg;
     std::string truncatedCommand;
     for(;;)
@@ -178,8 +179,8 @@ void * Server::handleRequest(int arg){
             quit(rfd);
         }else{
             
-            extractCmnds(buf,truncatedCommand,lines);
-            int numberOfCmnds = _countof(lines);
+            extractCmnds(buf,truncatedCommand,lines,numberOfCmnds);
+             = _countof(lines);
             std::string response ;
             Debug("client "<<rfd <<" request has "<<numberOfCmnds<<"number of commands ");
             
