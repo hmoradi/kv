@@ -112,10 +112,8 @@ void* Server::createThread(void* arg){
     return NULL;
 }
 //Extract Commands from socket output
-std::string* Server::extractCmnds(char* buff , std::string & truncatedCommand){
+std::string* Server::extractCmnds(char* buf , std::string & truncatedCommand){
     std::string clientRawMessage = std::string(buf);
-    Debug("clinet "<<rfd<< "in the length of"<<clientRawMessage.size()<< " requested "<< s);
-    
     std::string lineDelimiter = "\n";
     size_t pos = 0;
     std::string line;
