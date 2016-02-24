@@ -143,6 +143,7 @@ void * Server::handleRequest(int arg){
             }
             
             std::string response ;
+            std::cout<<"number of commands "<<i<<std::endl;
             for(int j=0;j< i;j++){
                 std::string delimiter = " ";
             
@@ -151,15 +152,15 @@ void * Server::handleRequest(int arg){
                     std::string token;
                 
                     int k = 0;
-                    while ((pos = s.find(delimiter)) != std::string::npos) {
-                        token = s.substr(0, pos);
+                    while ((pos = lines[j].find(delimiter)) != std::string::npos) {
+                        token = lines[j].substr(0, pos);
                         message[k].assign(token);
-                        s.erase(0, pos + delimiter.length());
+                        lines[j].erase(0, pos + delimiter.length());
                         k++;
                     }
-                    message[k].assign(s);
+                    message[k].assign(lines[j]);
                 }else{
-                    message[0].assign(s);
+                    message[0].assign(lines[j]);
                 }
                 //s.clear();
                 
