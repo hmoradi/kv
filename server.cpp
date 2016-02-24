@@ -151,7 +151,7 @@ void Server::parseCmnd(std::string cmnd, std::string * cmndContent){
         cmndContent[index].assign(cmnd);
     }
 }
-
+//Process each command based on it's value
 void Server::processCmnd(std::string* cmndContent, std::string& response,int rfd){
     if (cmndContent[0].compare("quit") == 0){
         Debug("inside quit");
@@ -214,7 +214,7 @@ void * Server::handleRequest(int rfd){
     return NULL;
 }
 std::string Server::setMap(std::string key, std::string val){
-    std::cout << "set called with "<< key << "=" << val << std::endl;
+    Debug("set called with "<< key << "=" << val);
     pthread_mutex_lock(&mutex_state);
     Server::map_[key]=val;
     pthread_mutex_unlock(&mutex_state);
@@ -222,7 +222,7 @@ std::string Server::setMap(std::string key, std::string val){
 
 }
 std::string Server::getMap(std::string key){
-    std::cout << "get called with "<< key <<std::endl;
+    Debug("get called with "<< key);
     std::string val = "null";
     pthread_mutex_lock(&mutex_state);
     if ( map_.find(key) != map_.end() ) {
@@ -232,7 +232,7 @@ std::string Server::getMap(std::string key){
     return key + "=" + val + "\n";
 }
 int Server::quit(int client_fd){
-    std::cout << "client disconnected. Clearing fd. " << client_fd << std::endl ;
+    Debug("client disconnected. Clearing fd. " << client_fd);
     pthread_mutex_lock(&mutex_state);
     FD_CLR(client_fd, &the_state);      // free fd's from  clients
     pthread_mutex_unlock(&mutex_state);
@@ -242,9 +242,9 @@ int Server::quit(int client_fd){
 
 int Server::server_send(int fd, std::string data){
     int ret;
-    std::cout<<"sending message to client "<<fd<<" message is "<<data<<std::endl;
+    Debug("sending message to client "<<fd<<" message is "<<data);
     ret = send(fd, data.c_str(), strlen(data.c_str()),0);
-    std::cout<<"len of sent message  "<<ret <<std::endl;
+    Debug(len of sent message  "<<ret <<std");
     if(ret <=0){
        throw_error("could not send to cliend",errno);
     }
