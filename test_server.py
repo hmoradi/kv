@@ -183,49 +183,49 @@ class TestServer(unittest.TestCase):
     #     self.api0.assert_set('k2', 'val2')
     #     self.api0.assert_get('k2', 'val2')
 
-    def test_threaded_pipeline(self):
-        v = lambda i: ('val%s' % i)*(i%100+1)
+    # def test_threaded_pipeline(self):
+    #     v = lambda i: ('val%s' % i)*(i%100+1)
 
-        def write_target(api, count):
-            reqs = '\n'.join(['set k %s' % v(i) for i in range(1, count)])
-            api._send(reqs)
-            api._send('\nset k pipeline\n')
+    #     def write_target(api, count):
+    #         reqs = '\n'.join(['set k %s' % v(i) for i in range(1, count)])
+    #         api._send(reqs)
+    #         api._send('\nset k pipeline\n')
 
-        def read_target(api, count):
-            for i in range(1, count):
-                api.assert_recv_msg('k', v(i))
-            api.assert_recv_msg('k', 'pipeline')
+    #     def read_target(api, count):
+    #         for i in range(1, count):
+    #             api.assert_recv_msg('k', v(i))
+    #         api.assert_recv_msg('k', 'pipeline')
 
-        apis = []
-        threads = []
-        thread_pairs=2
-        request_count = 5*1000
-        for i in range(thread_pairs):
-            api = EpochAPI(LIST_ADDR, LIST_PORT)
-            threads.append(threading.Thread(target=read_target, args=(api, request_count)))
-            threads.append(threading.Thread(target=write_target, args=(api, request_count)))
-            apis.append(api)
-        map(lambda t: t.start(), threads)
-        map(lambda t: t.join(), threads)
-        self.api0.assert_get('k', 'pipeline')
-        self.api1.assert_get('k', 'pipeline')
+    #     apis = []
+    #     threads = []
+    #     thread_pairs=2
+    #     request_count = 5*1000
+    #     for i in range(thread_pairs):
+    #         api = EpochAPI(LIST_ADDR, LIST_PORT)
+    #         threads.append(threading.Thread(target=read_target, args=(api, request_count)))
+    #         threads.append(threading.Thread(target=write_target, args=(api, request_count)))
+    #         apis.append(api)
+    #     map(lambda t: t.start(), threads)
+    #     map(lambda t: t.join(), threads)
+    #     self.api0.assert_get('k', 'pipeline')
+    #     self.api1.assert_get('k', 'pipeline')
 
-    # def test_tarpit(self):
-    #     self.api0._send('s')
-    #     time.sleep(0.25)
-    #     self.api0._send('e')
-    #     time.sleep(0.25)
-    #     self.api0._send('t')
-    #     time.sleep(0.25)
-    #     self.api0._send(' ')
-    #     time.sleep(0.25)
-    #     self.api0._send('tar')
-    #     time.sleep(0.5)
-    #     self.api0._send(' ')
-    #     time.sleep(0.25)
-    #     self.api0._send('pit')
-    #     time.sleep(0.25)
-    #     self.api0._send('\n')
+    def test_tarpit(self):
+        self.api0._send('s')
+        time.sleep(0.25)
+        self.api0._send('e')
+        time.sleep(0.25)
+        self.api0._send('t')
+        time.sleep(0.25)
+        self.api0._send(' ')
+        time.sleep(0.25)
+        self.api0._send('tar')
+        time.sleep(0.5)
+        self.api0._send(' ')
+        time.sleep(0.25)
+        self.api0._send('pit')
+        time.sleep(0.25)
+        self.api0._send('\n')
 
     # def test_multi_connection_partial_tarpit(self):
     #     self.api0.assert_get('tar', 'null')
