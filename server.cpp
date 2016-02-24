@@ -214,7 +214,7 @@ std::string Server::setMap(std::string key, std::string val){
     pthread_mutex_lock(&mutex_state);
     writers++;
     while (!((readers == 0) && (active_writers == 0))) {
-        pthread_cond_wait(&writersQ, &m);
+        pthread_cond_wait(&writersQ, &mutex_state);
     }
     active_writers++;
     pthread_mutex_unlock(&mutex_state);
@@ -237,7 +237,7 @@ std::string Server::getMap(std::string key){
     std::string val = "null";
      pthread_mutex_lock(&mutex_state);
      while (!(writers == 0))
-     pthread_cond_wait(&readersQ, &m);
+     pthread_cond_wait(&readersQ, &mutex_state);
      readers++;
      pthread_mutex_unlock(&mutex_state);
 
