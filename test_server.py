@@ -289,20 +289,20 @@ class TestServer(unittest.TestCase):
     #     for a in apis:
     #         a.assert_quit()
 
-    def test_cross_connection_xfer(self):
-        self.api0.assert_get('foo', 'null')
-        self.api1.assert_get('foo', 'null')
-        self.api0.assert_set('foo', 'bar')
-        self.api1.assert_get('foo', 'bar')
-        self.api1.assert_set('foo', 'baz')
-        self.api0.assert_get('foo', 'baz')
-
-    # def test_reconnect(self):
+    # def test_cross_connection_xfer(self):
     #     self.api0.assert_get('foo', 'null')
+    #     self.api1.assert_get('foo', 'null')
     #     self.api0.assert_set('foo', 'bar')
-    #     self.api0.assert_quit()
-    #     self.api0 = EpochAPI(LIST_ADDR, LIST_PORT)
-    #     self.api0.assert_set('foo', 'bar')
+    #     self.api1.assert_get('foo', 'bar')
+    #     self.api1.assert_set('foo', 'baz')
+    #     self.api0.assert_get('foo', 'baz')
+
+    def test_reconnect(self):
+        self.api0.assert_get('foo', 'null')
+        self.api0.assert_set('foo', 'bar')
+        self.api0.assert_quit()
+        self.api0 = EpochAPI(LIST_ADDR, LIST_PORT)
+        self.api0.assert_set('foo', 'bar')
 
     # def test_many_keys(self):
     #     k = lambda i: 'key%s' % i
