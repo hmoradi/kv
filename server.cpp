@@ -112,13 +112,11 @@ void* Server::createThread(void* arg){
     return NULL;
 }
 //Extract Commands from socket output
-std::string* Server::extractCmnds(char* buf , std::string & truncatedCommand,std::string * lines,int& numberOfCmnds){
+void Server::extractCmnds(char* buf , std::string & truncatedCommand,std::string * lines,int& numberOfCmnds){
     std::string clientRawMessage = std::string(buf);
     std::string lineDelimiter = "\n";
     size_t pos = 0;
     std::string line;
-    //TODO constant value is not scalable
-    //std::string lines[1024] ;
     numberOfCmnds = 0;
     while ((pos = clientRawMessage.find(lineDelimiter)) != std::string::npos) {
         line = clientRawMessage.substr(0, pos);
@@ -135,14 +133,11 @@ std::string* Server::extractCmnds(char* buf , std::string & truncatedCommand,std
     if(clientRawMessage.size()>0){
         truncatedCommand += clientRawMessage;    
     }
-    return lines;
 }
 
 //Parse command line to extract command , key and value
-std::string* Server::parseCmnd(std::string cmnd, std::string * cmndContent){
+void Server::parseCmnd(std::string cmnd, std::string * cmndContent){
     std::string cmndDelimiter = " ";
-    //TODO maybe it can be dynamic allocation
-    //std::string cmndContent [3];
     size_t pos = 0;
     std::string token;
     int index = 0;
@@ -155,7 +150,25 @@ std::string* Server::parseCmnd(std::string cmnd, std::string * cmndContent){
     if (cmnd.size()>0){
         cmndContent[index].assign(cmnd);
     }
-    return cmndContent;
+}
+
+void Server::processCmnd(std::string* cmndContent, std::string& response){
+    if (cmndContent[0].compare("quit") == 0){
+        Debug("inside quit");
+        if (response.size()>0){
+            server_send(rfd,response);
+            response.clear();
+        }
+        quit(rfd);
+    }else if(cmndContent[0].compare("set") == 0){
+        Debug("inside set");
+        response += setMap(cmndContent[1],cmndContent[2]);
+    }else if(cmndContent[0].compare("get") == 0){
+        response += getMap(cmndContent[1]);
+    }else{
+        Debug("command is not correct");
+    }
+
 }
 void * Server::handleRequest(int arg){
     //int fd = arg;
@@ -166,7 +179,7 @@ void * Server::handleRequest(int arg){
     char buf[1024];
     int buflen;
     std::string cmndContent[3];
-    std::string cmnds[1024];
+    std::string cmnds[1024]; //TODO it can be dynamic
     int numberOfCmnds;
     std::string response ;
     rfd = (int)arg;
@@ -187,21 +200,7 @@ void * Server::handleRequest(int arg){
             for(int cmndIndex=0;cmndIndex< numberOfCmnds;cmndIndex++){
              
                 parseCmnd(cmnds[cmndIndex],cmndContent);
-                if (cmndContent[0].compare("quit") == 0){
-                    Debug("inside quit");
-                    if (response.size()>0){
-                        server_send(rfd,response);
-                        response.clear();
-                    }
-                    quit(rfd);
-                }else if(cmndContent[0].compare("set") == 0){
-                    Debug("inside set");
-                    response += setMap(cmndContent[1],cmndContent[2]);
-                }else if(cmndContent[0].compare("get") == 0){
-                    response += getMap(cmndContent[1]);
-                }else{
-                    Debug("command is not correct");
-                }
+                processCmnd(cmndContent,response);
                 
             }
             if(response.size()>0){
