@@ -60,7 +60,9 @@ Server::Server(const std::string& listen_address, int listen_port)
     if(listen(listen_fd, 48)) {
         throw_error("could not listen on socket", errno);
     }
-
+    readers = 0;
+    writers = 0;
+    active_writers = 0;
     //picked up by test_server.py to know server is ready
     //this line must be output after listen returns successfully 
     std::cout << "listening on " << listen_address << ":" << listen_port << std::endl;
