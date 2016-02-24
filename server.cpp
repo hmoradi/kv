@@ -188,7 +188,7 @@ void * Server::handleRequest(int arg){
              
                 parseCmnd(cmnds[cmndIndex],cmndContent);
                 if (cmndContent[0].compare("quit") == 0){
-                    Debug("inside quit"<<message[0]);
+                    Debug("inside quit");
                     if (response.size()>0){
                         server_send(rfd,response);
                         response.clear();
