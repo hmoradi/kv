@@ -108,7 +108,7 @@ void* Server::createThread(void* arg){
 }
 void * Server::handleRequest(int arg){
     //int fd = arg;
-    std::cout <<"handle request, fd is "<< arg << std::endl;
+    //std::cout <<"handle request, fd is "<< arg << std::endl;
     
      int rfd;
 
@@ -125,7 +125,7 @@ void * Server::handleRequest(int arg){
             quit(rfd);
         }else{
             std::string s = std::string(buf);
-            std::cout<<"request is "<<s <<std::endl;
+            std::cout<<"clinet "<<rfd<< " requested "<< s <<std::endl;
             
             std::string lineDelimiter = "\n";
             size_t pos = 0;
@@ -143,7 +143,7 @@ void * Server::handleRequest(int arg){
             }
             
             std::string response ;
-            std::cout<<"number of commands "<<i<<std::endl;
+            std::cout<<"client "<<rfd <<" request has number of commands "<<i<<std::endl;
             for(int j=0;j< i;j++){
                 std::string delimiter = " ";
             
@@ -225,7 +225,7 @@ int Server::quit(int client_fd){
 
 int Server::server_send(int fd, std::string data){
     int ret;
-    std::cout<<"sending message to client"<<fd<<"message is"<<data<<std::endl;
+    std::cout<<"sending message to client "<<fd<<" message is "<<data<<std::endl;
     ret = send(fd, data.c_str(), strlen(data.c_str()),0);
     std::cout<<"len of sent message  "<<ret <<std::endl;
     if(ret <=0){
