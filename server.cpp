@@ -112,7 +112,7 @@ void* Server::createThread(void* arg){
     return NULL;
 }
 //Extract Commands from socket output
-std::string[] Server::extractCmnds(char* buff , std::string & truncatedCommand){
+std::string* Server::extractCmnds(char* buff , std::string & truncatedCommand){
     std::string clientRawMessage = std::string(buf);
     Debug("clinet "<<rfd<< "in the length of"<<clientRawMessage.size()<< " requested "<< s);
     
@@ -141,7 +141,7 @@ std::string[] Server::extractCmnds(char* buff , std::string & truncatedCommand){
 }
 
 //Parse command line to extract command , key and value
-std::string[] Server::parseCmnd(std::string cmnd){
+std::string* Server::parseCmnd(std::string cmnd){
     std::string cmndDelimiter = " ";
     //TODO maybe it can be dynamic allocation
     std::string cmndContent [3];
