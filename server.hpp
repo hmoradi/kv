@@ -13,6 +13,7 @@ public:
 private:
     int listen_fd;
     //add your members here
+    int client_fd;
     int readers;
     int writers;
     static std::map<std::string,std::string> map_;
