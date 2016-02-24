@@ -24,8 +24,8 @@
 #endif
 volatile fd_set the_state;
 pthread_mutex_t mutex_state = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t readersQ = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t writersQ = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t readersQ ;
+pthread_cond_t writersQ;
 namespace EpochLabsTest {
 struct readThreadParams {
     Server* server_;
