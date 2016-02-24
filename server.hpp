@@ -24,7 +24,7 @@ private:
     int quit(int fd);
     std::string setMap(std::string key, std::string val);
     std::string getMap (std::string key);
-    std::string* extractCmnds(char* buf , std::string & truncatedCommand);
+    std::string* extractCmnds(char* buf , std::string & truncatedCommand , std::string * lines);
     std::string* parseCmnd(std::string cmnd);
 };
 
