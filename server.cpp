@@ -170,11 +170,9 @@ void Server::processCmnd(std::string* cmndContent, std::string& response,int rfd
     }
 
 }
-void * Server::handleRequest(int arg){
+void * Server::handleRequest(int rfd){
     //int fd = arg;
     //std::cout <<"handle request, fd is "<< arg << std::endl;
-    
-     int rfd;
 
     char buf[1024];
     int buflen;
@@ -182,7 +180,6 @@ void * Server::handleRequest(int arg){
     std::string cmnds[1024]; //TODO it can be dynamic
     int numberOfCmnds;
     std::string response ;
-    rfd = (int)arg;
     std::string truncatedCommand;
     for(;;)
     {
