@@ -106,6 +106,7 @@ void* Server::createThread(void* arg){
     (readParams->server_) -> handleRequest(readParams -> client_fd);
     return NULL;
 }
+//std::string[] Server::extractLines()
 void * Server::handleRequest(int arg){
     //int fd = arg;
     //std::cout <<"handle request, fd is "<< arg << std::endl;
@@ -116,6 +117,7 @@ void * Server::handleRequest(int arg){
     int buflen;
     std::string message[3];
     rfd = (int)arg;
+    std::string truncatedCommand;
     for(;;)
     {
         //read incomming message.
@@ -134,12 +136,19 @@ void * Server::handleRequest(int arg){
             int i = 0;
             while ((pos = s.find(lineDelimiter)) != std::string::npos) {
                 line = s.substr(0, pos);
-                lines[i].assign(line);
+                if (truncatedCommand.size() >0){
+                    lines[i].assign(truncatedCommand + line);
+                    truncatedCommand.clear();
+                }else{
+                    lines[i].assign(line);
+                }
+                
                 s.erase(0, pos + lineDelimiter.length());
                 i++;
             }
             if(s.size()>0){
-                lines[i].assign(s);    
+                //lines[i].assign(s);
+                truncatedCommand.assign(s);    
             }
             
             std::string response ;
