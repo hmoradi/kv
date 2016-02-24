@@ -308,7 +308,7 @@ class TestServer(unittest.TestCase):
         k = lambda i: 'key%s' % i
         v = lambda i: '%sval' % i
 
-        for i in range(1000000):
+        for i in range(100000000):
             a0,a1 = (self.api0, self.api1) if i%2==0 else (self.api1, self.api0)
             a0.assert_set(k(i), v(i))
             a1.assert_get(k(i), v(i))

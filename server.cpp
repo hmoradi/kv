@@ -14,6 +14,14 @@
 
 //added my header files
 #include <pthread.h>
+
+#define USEDEBUG
+
+#ifdef USEDEBUG
+#define Debug( x ) std::cout << x <<std::endl;
+#else
+#define Debug( x ) 
+#endif
 volatile fd_set the_state;
 pthread_mutex_t mutex_state = PTHREAD_MUTEX_INITIALIZER;
 namespace EpochLabsTest {
@@ -81,8 +89,6 @@ void Server::run() {
     //run() should loop forever servicing requests/connections
     //throw_error("Server::run() is not not implemented", 0);
     while(1){
-        //pthread_mutex_lock(&mutex_state);
-        
         client_fd = accept_new_connection();
         pthread_mutex_lock(&mutex_state);  // Make sure no 2 threads can create a fd simultanious.
         FD_SET(client_fd, &the_state);  // Add a file descriptor to the FD-set.
@@ -92,7 +98,6 @@ void Server::run() {
         params->server_ = this;
         params->client_fd = client_fd;
         pthread_create(&threads[client_fd], NULL, Server::createThread, params);
-        //pthread_mutex_unlock(&mutex_state);
     }
 }
 
@@ -106,7 +111,33 @@ void* Server::createThread(void* arg){
     (readParams->server_) -> handleRequest(readParams -> client_fd);
     return NULL;
 }
-//std::string[] Server::extractLines()
+//Extract Commands from socket output
+std::string[] Server::extractLines(char* buff){
+    std::string s = std::string(buf);
+    Debug("clinet "<<rfd<< "in the length of"<<s.size()<< " requested "<< s);
+    
+    std::string lineDelimiter = "\n";
+    size_t pos = 0;
+    std::string line;
+    std::string lines[1024] ;
+    int i = 0;
+    while ((pos = s.find(lineDelimiter)) != std::string::npos) {
+        line = s.substr(0, pos);
+        if (truncatedCommand.size() >0){
+            lines[i].assign(truncatedCommand + line);
+            truncatedCommand.clear();
+        }else{
+            lines[i].assign(line);
+        }
+        
+        s.erase(0, pos + lineDelimiter.length());
+        i++;
+    }
+    if(s.size()>0){
+        //lines[i].assign(s);
+        truncatedCommand += s;    
+    }
+}
 void * Server::handleRequest(int arg){
     //int fd = arg;
     //std::cout <<"handle request, fd is "<< arg << std::endl;
@@ -126,30 +157,7 @@ void * Server::handleRequest(int arg){
         {   
             quit(rfd);
         }else{
-            std::string s = std::string(buf);
-            std::cout<<"clinet "<<rfd<< "in the length of"<<s.size()<<" "<<buflen<< " requested "<< s <<std::endl;
             
-            std::string lineDelimiter = "\n";
-            size_t pos = 0;
-            std::string line;
-            std::string lines[1024] ;
-            int i = 0;
-            while ((pos = s.find(lineDelimiter)) != std::string::npos) {
-                line = s.substr(0, pos);
-                if (truncatedCommand.size() >0){
-                    lines[i].assign(truncatedCommand + line);
-                    truncatedCommand.clear();
-                }else{
-                    lines[i].assign(line);
-                }
-                
-                s.erase(0, pos + lineDelimiter.length());
-                i++;
-            }
-            if(s.size()>0){
-                //lines[i].assign(s);
-                truncatedCommand += s;    
-            }
             
             std::string response ;
             std::cout<<"client "<<rfd <<" request has number of commands "<<i<<std::endl;
