@@ -126,42 +126,70 @@ void * Server::handleRequest(int arg){
         }else{
             std::string s = std::string(buf);
             std::cout<<"request is "<<s <<std::endl;
-            s.erase(s.size()-1);
+            //s.erase(s.size()-1);
             //std::cout<< "after erase is "<< s << std::endl;
-            std::string delimiter = " ";
-            
+            ///////\
+            std::string lineDelimiter = "\n";
             size_t pos = 0;
-            if((pos = s.find(delimiter)) != std::string::npos){
-                std::string token;
-            
-                int i = 0;
-                while ((pos = s.find(delimiter)) != std::string::npos) {
-                    token = s.substr(0, pos);
-                    message[i].assign(token);
-                    s.erase(0, pos + delimiter.length());
-                    i++;
-                }
-                message[i].assign(s);
-            }else{
-                message[0].assign(s);
+            std::string line;
+            std::string lines[1024] ;
+            int i = 0;
+            while ((pos = s.find(delimiter)) != std::string::npos) {
+                line = s.substr(0, pos);
+                lines[i].assign(line);
+                s.erase(0, pos + delimiter.length());
+                i++;
             }
-            s.clear();
+            if(s.size()>0){
+                lines[i].assign(s);    
+            }
             
-           
-            //std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
-            if (message[0].compare("quit") == 0){
-                std::cout<<"inside quit"<<message[0]<<std::endl;
-                quit(rfd);
-            }else if(message[0].compare("set") == 0){
-                std::cout<<"inside set" << std::endl;
-                std::string response = setMap(message[1],message[2]);
-                std::cout<< "response is " << response << std::endl;
-                server_send(rfd,response);
-            }else if(message[0].compare("get") == 0){
-                std::string response = getMap(message[1]);
-                std::cout<< "response is " << response << std::endl;
-                server_send(rfd,response);
-            } 
+            ///////
+            std::string respons ;
+            for(int j=0;j< i;j++){
+                std::string delimiter = " ";
+            
+                size_t pos = 0;
+                if((pos = lines[j].find(delimiter)) != std::string::npos){
+                    std::string token;
+                
+                    int k = 0;
+                    while ((pos = s.find(delimiter)) != std::string::npos) {
+                        token = s.substr(0, pos);
+                        message[k].assign(token);
+                        s.erase(0, pos + delimiter.length());
+                        k++;
+                    }
+                    message[k].assign(s);
+                }else{
+                    message[0].assign(s);
+                }
+                //s.clear();
+                
+               
+                //std::cout<< "id" <<rfd << message[0] << " "<< message[1]<<" " << message[2] <<std::endl;
+                
+                if (message[0].compare("quit") == 0){
+                    std::cout<<"inside quit"<<message[0]<<std::endl;
+                    if (response.size()>0){
+                        server_send(rfd,response);
+                        response.clear();
+                    }
+                    quit(rfd);
+                }else if(message[0].compare("set") == 0){
+                    std::cout<<"inside set" << std::endl;
+                    response += setMap(message[1],message[2]);
+                    //std::cout<< "response is " << response << std::endl;
+                    //server_send(rfd,response);
+                }else if(message[0].compare("get") == 0){
+                    response+ = getMap(message[1]);
+                    std::cout<< "response is " << response << std::endl;
+                    //server_send(rfd,response);
+                } 
+                
+            }
+            server_send(rfd,response);
+            response.clear();
 
         }
         char *begin = &buf[0];
