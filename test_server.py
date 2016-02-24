@@ -284,7 +284,7 @@ class TestServer(unittest.TestCase):
             self.api0.assert_set('foo', 'foo')
             self.api1.assert_get('foo', 'foo')
             self.api1.assert_set('foo', 'barbazqux')
-            self.api0.assert_get('foo', 'barbazqu')
+            self.api0.assert_get('foo', 'barbazqux')
 
         for a in apis:
             a.assert_quit()
