@@ -127,61 +127,61 @@ class TestServer(unittest.TestCase):
         time.sleep(1)
         assert self.p.poll() == None
         
-    # def test_empty_quit(self):
-    #     self.api1.assert_quit()
-    #     self.api0.assert_quit()
+    def test_empty_quit(self):
+        self.api1.assert_quit()
+        self.api0.assert_quit()
 
-    # def test_empty_disconnect(self):
-    #      self.assert_disconnect(self.api1)
-    #      self.assert_disconnect(self.api0)
+    def test_empty_disconnect(self):
+         self.assert_disconnect(self.api1)
+         self.assert_disconnect(self.api0)
 
-    # def test_disconnect_after_set(self):
-    #     self.api0.assert_set('a'*100, 'b'*100)
-    #     self.assert_disconnect(self.api0)
+    def test_disconnect_after_set(self):
+        self.api0.assert_set('a'*100, 'b'*100)
+        self.assert_disconnect(self.api0)
 
-    # def test_disconnect_after_get(self):
-    #     self.api0.assert_set('a'*500, 'b'*500)
-    #     self.api0.assert_get('a'*500, 'b'*500)
-    #     self.assert_disconnect(self.api0)
+    def test_disconnect_after_get(self):
+        self.api0.assert_set('a'*500, 'b'*500)
+        self.api0.assert_get('a'*500, 'b'*500)
+        self.assert_disconnect(self.api0)
 
-    # def test_example_session(self):
-    #     self.api0.assert_set('foo', 'bar')
-    #     self.api0.assert_get('foo', 'bar')
-    #     self.api0.assert_get('bar', 'null')
-    #     self.api0.assert_set('1a2b3c', 'foo')
-    #     self.api0.assert_set('10', 'ten')
-    #     self.api0.assert_get('foo', 'bar')
-    #     self.api0.assert_set('foo', 'baz')
-    #     self.api0.assert_get('ten', 'null')
-    #     self.api0.assert_get('foo', 'baz')
-    #     self.api0.assert_get('qux', 'null')
-    #     self.api0.assert_quit()
+    def test_example_session(self):
+        self.api0.assert_set('foo', 'bar')
+        self.api0.assert_get('foo', 'bar')
+        self.api0.assert_get('bar', 'null')
+        self.api0.assert_set('1a2b3c', 'foo')
+        self.api0.assert_set('10', 'ten')
+        self.api0.assert_get('foo', 'bar')
+        self.api0.assert_set('foo', 'baz')
+        self.api0.assert_get('ten', 'null')
+        self.api0.assert_get('foo', 'baz')
+        self.api0.assert_get('qux', 'null')
+        self.api0.assert_quit()
 
-    # def test_pipeline(self):
-    #     reqs = [
-    #         ('get', 'k0'),
-    #         ('set', 'k1', 'v1'),
-    #         ('get', 'k1'),
-    #         ('set', 'k0', 'v0'),
-    #         ('set', 'k1', 'val1'),
-    #         ('get', 'k0'),
-    #         ('get', 'k1')
-    #     ]
-    #     rsps = [
-    #         ('k0', 'null'),
-    #         ('k1', 'v1'),
-    #         ('k1', 'v1'),
-    #         ('k0', 'v0'),
-    #         ('k1', 'val1'),
-    #         ('k0', 'v0'),
-    #         ('k1', 'val1')
-    #     ]
-    #     msgs = map(lambda t: ' '.join(t), reqs)
-    #     self.api0._send('\n'.join(msgs) + '\n')
-    #     self.api0.assert_multi_response(rsps)
-    #     self.api0.assert_set('k2', 'v2')
-    #     self.api0.assert_set('k2', 'val2')
-    #     self.api0.assert_get('k2', 'val2')
+    def test_pipeline(self):
+        reqs = [
+            ('get', 'k0'),
+            ('set', 'k1', 'v1'),
+            ('get', 'k1'),
+            ('set', 'k0', 'v0'),
+            ('set', 'k1', 'val1'),
+            ('get', 'k0'),
+            ('get', 'k1')
+        ]
+        rsps = [
+            ('k0', 'null'),
+            ('k1', 'v1'),
+            ('k1', 'v1'),
+            ('k0', 'v0'),
+            ('k1', 'val1'),
+            ('k0', 'v0'),
+            ('k1', 'val1')
+        ]
+        msgs = map(lambda t: ' '.join(t), reqs)
+        self.api0._send('\n'.join(msgs) + '\n')
+        self.api0.assert_multi_response(rsps)
+        self.api0.assert_set('k2', 'v2')
+        self.api0.assert_set('k2', 'val2')
+        self.api0.assert_get('k2', 'val2')
 
     def test_threaded_pipeline(self):
         v = lambda i: ('val%s' % i)*(i%100+1)
