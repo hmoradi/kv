@@ -139,10 +139,10 @@ std::string* Server::extractCmnds(char* buf , std::string & truncatedCommand,std
 }
 
 //Parse command line to extract command , key and value
-std::string* Server::parseCmnd(std::string cmnd){
+std::string* Server::parseCmnd(std::string cmnd, std::string * cmndContent){
     std::string cmndDelimiter = " ";
     //TODO maybe it can be dynamic allocation
-    std::string cmndContent [3];
+    //std::string cmndContent [3];
     size_t pos = 0;
     std::string token;
     int index = 0;
@@ -165,7 +165,8 @@ void * Server::handleRequest(int arg){
 
     char buf[1024];
     int buflen;
-    std::string message[3];
+    std::string cmndContent[3];
+    std::string lines[1024];
     rfd = (int)arg;
     std::string truncatedCommand;
     for(;;)
@@ -177,27 +178,26 @@ void * Server::handleRequest(int arg){
             quit(rfd);
         }else{
             
-            std::string [] cmnds = extractCmnds(buf,truncatedCommand);
-            int numberOfCmnds = _countof(cmnds);
+            extractCmnds(buf,truncatedCommand,lines);
+            int numberOfCmnds = _countof(lines);
             std::string response ;
             Debug("client "<<rfd <<" request has "<<numberOfCmnds<<"number of commands ");
             
             for(int cmndIndex=0;cmndIndex< numberOfCmnds;cmndIndex++){
              
-                std::string[] cmndParts = parseCmnd(cmnds[cmndIndex]);
-                if (cmndParts[0].compare("quit") == 0){
+                parseCmnd(cmnds[cmndIndex],cmndContent);
+                if (cmndContent[0].compare("quit") == 0){
                     Debug("inside quit"<<message[0]);
                     if (response.size()>0){
                         server_send(rfd,response);
                         response.clear();
                     }
                     quit(rfd);
-                }else if(cmndParts[0].compare("set") == 0){
-                    std::cout<<"inside set" << std::endl;
-                    response += setMap(message[1],message[2]);
-                }else if(cmndParts[0].compare("get") == 0){
-                    response += getMap(message[1]);
-                    std::cout<< "response is " << response << std::endl;
+                }else if(cmndContent[0].compare("set") == 0){
+                    Debug("inside set");
+                    response += setMap(cmndContent[1],cmndContent[2]);
+                }else if(cmndContent[0].compare("get") == 0){
+                    response += getMap(cmndContent[1]);
                 }else{
                     throw_error("commnad is wrong");
                 }
