@@ -166,7 +166,7 @@ void * Server::handleRequest(int arg){
     char buf[1024];
     int buflen;
     std::string cmndContent[3];
-    std::string lines[1024];
+    std::string cmnds[1024];
     int numberOfCmnds;
     std::string response ;
     rfd = (int)arg;
@@ -180,7 +180,7 @@ void * Server::handleRequest(int arg){
             quit(rfd);
         }else{
             
-            extractCmnds(buf,truncatedCommand,lines,numberOfCmnds);
+            extractCmnds(buf,truncatedCommand,cmnds,numberOfCmnds);
             
             Debug("client "<<rfd <<" request has "<<numberOfCmnds<<"number of commands ");
             
