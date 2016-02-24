@@ -200,7 +200,7 @@ void * Server::handleRequest(int arg){
                 }else if(cmndContent[0].compare("get") == 0){
                     response += getMap(cmndContent[1]);
                 }else{
-                    throw_error("commnad is wrong");
+                    Debug("command is not correct");
                 }
                 
             }
