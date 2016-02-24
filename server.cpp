@@ -198,15 +198,20 @@ void * Server::handleRequest(int arg){
 }
 std::string Server::setMap(std::string key, std::string val){
     std::cout << "set called with "<< key << "=" << val << std::endl;
+    pthread_mutex_lock(&mutex_state);
     Server::map_[key]=val;
+    pthread_mutex_unlock(&mutex_state);
     return key + "=" + val + "\n";
+
 }
 std::string Server::getMap(std::string key){
     std::cout << "get called with "<< key <<std::endl;
     std::string val = "null";
+    pthread_mutex_lock(&mutex_state);
     if ( map_.find(key) != map_.end() ) {
         val = map_[key];
     }
+    pthread_mutex_unlock(&mutex_state);
     return key + "=" + val + "\n";
 }
 int Server::quit(int client_fd){
