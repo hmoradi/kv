@@ -112,13 +112,13 @@ void* Server::createThread(void* arg){
     return NULL;
 }
 //Extract Commands from socket output
-std::string* Server::extractCmnds(char* buf , std::string & truncatedCommand){
+std::string* Server::extractCmnds(char* buf , std::string & truncatedCommand,std::string * lines){
     std::string clientRawMessage = std::string(buf);
     std::string lineDelimiter = "\n";
     size_t pos = 0;
     std::string line;
     //TODO constant value is not scalable
-    std::string lines[1024] ;
+    //std::string lines[1024] ;
     int numberOfCmnds = 0;
     while ((pos = clientRawMessage.find(lineDelimiter)) != std::string::npos) {
         line = clientRawMessage.substr(0, pos);
