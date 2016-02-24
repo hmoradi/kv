@@ -179,7 +179,7 @@ void * Server::handleRequest(int arg){
                     //std::cout<< "response is " << response << std::endl;
                     //server_send(rfd,response);
                 }else if(message[0].compare("get") == 0){
-                    response+ = getMap(message[1]);
+                    response += getMap(message[1]);
                     std::cout<< "response is " << response << std::endl;
                     //server_send(rfd,response);
                 } 
