@@ -199,7 +199,7 @@ class TestServer(unittest.TestCase):
         apis = []
         threads = []
         thread_pairs=2
-        request_count = 5*100
+        request_count = 5*10
         for i in range(thread_pairs):
             api = EpochAPI(LIST_ADDR, LIST_PORT)
             threads.append(threading.Thread(target=read_target, args=(api, request_count)))
