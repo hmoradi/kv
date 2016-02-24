@@ -208,7 +208,7 @@ class TestServer(unittest.TestCase):
         map(lambda t: t.start(), threads)
         map(lambda t: t.join(), threads)
         self.api0.assert_get('k', 'pipeline')
-        self.api1.assert_get('k', 'pipelin')
+        self.api1.assert_get('k', 'pipeline')
 
     # def test_tarpit(self):
     #     self.api0._send('s')
